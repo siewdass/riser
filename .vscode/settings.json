@@ -1,0 +1,19 @@
+{
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.workingDirectories": [ "./backend",  "./frontend" ],
+  "eslint.validate": [ "javascript", "javascriptreact", "html", "typescriptreact", "typescript" ],
+  "files.exclude": {
+    "**/.vscode": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/android": true,
+    "**/package-lock.json": true,
+    "**/yarn.lock": true,
+  },
+  "C_Cpp.errorSquiggles": "disabled",
+}
