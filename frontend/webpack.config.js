@@ -52,5 +52,6 @@ module.exports = {
     port: 3001,
     server: 'http',
     historyApiFallback: true,
+    allowedHosts: 'all',
   }
 }
