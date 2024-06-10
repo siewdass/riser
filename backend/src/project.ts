@@ -4,3 +4,10 @@ export async function Project( database, { body: { project, repository, branch }
 
 	res.json( {} )
 }
+
+export async function GetProject( database, { body: { project } }, res ) {
+	res.json( await database.Function.find(
+		{ name: project.name, type: 'frontend' },
+		{ path: true, code: true, _id: false }
+	) )
+}

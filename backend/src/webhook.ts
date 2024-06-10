@@ -6,25 +6,46 @@ import { load } from 'js-yaml'
 
 export async function Webhook( database, { query, body }, res ) {
 
-	const project = await database.Project.findOne( { name: query.project } )
+	try {
+		const project = await database.Project.findOne( { name: query.project } )
 
-	if ( !project && !body.ref.endsWith( project.branch ) ) return
+		if ( !project && !body.ref.endsWith( project.branch ) ) throw 'Not the select branch.'
+		
+		const fs = createFsFromVolume( new Volume() )
+		
+		await clone( { fs, http, dir: '/', url: project.repository, ref: project.branch, singleBranch: true, depth: 1 } )
+		
+		const yaml = await fs.promises.readFile( '/riser.yml', 'utf-8' )
+		const config = load( yaml )
+		console.log( config )
 
-	const fs = createFsFromVolume( new Volume() )
+		await database.Function.deleteMany( { name: project.name } )
+		
+		let all = ''
+		
+		for ( let app in config.riser[ 'view' ] ) {
+			const { path, handler, packages } = config.riser[ 'view' ][ app ]
+			const source = await fs.promises.readFile( handler, 'utf-8' )
+			all += source
+			all += `exports.config[ '${path}' ] = '${app}';`
+		}
 
-	await clone( { fs, http, dir: '/', url: project.repository, ref: project.branch, singleBranch: true, depth: 1 } )
+		const { code } = transform( all, { presets: [ 'es2015', 'react' ] } )
+		await database.Function.create( { name: project.name, type: 'frontend', code } ) 
+		
+		Object.keys( config.riser[ 'gateway' ] ).map( async app => {
+			const { path, handler, packages } = config.riser[ 'gateway' ][ app ]
+			const source = await fs.promises.readFile( handler, 'utf-8' )
+			const { code } = transform( source, { presets: [ 'es2015' ] } )
+			await database.Function.create( { name: project.name, path, type: 'backend', packages, code: code.replace( '"use strict";', '' ) } ) 
+		} )
+		
+		res.json( {} )
+	} catch ( error ) {
 
-	const yaml = await fs.promises.readFile( '/functions.yml', 'utf-8' )
-	const config = load( yaml )
-	console.log( config.functions )
+		console.error( error )
+		res.json( { error } )
 
-	await database.Function.deleteMany( { name: project.name } )
+	}
 
-	config.functions.map( async ( { type, path, handler, packages } ) => {
-		const source = await fs.promises.readFile( handler, 'utf-8' )
-		const { code } = transform( source, { presets: [ 'es2015', 'react' ] } )
-		await database.Function.create( { name: project.name, path, type, packages, code } ) 
-	} )
-
-	res.json( {} )
 }
