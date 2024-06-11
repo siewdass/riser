@@ -8,6 +8,12 @@ export async function API( database, req, res ) {
 
 		console.log( project.name )
 
+		const { code } = await database.Function.findOne(
+			{ name: project.name, type: 'gateway', path: `/${params[3]}` },
+			{ code: true, _id: false }
+		)
+
+		console.log( code )
 	} catch ( error ) {
 
 		console.error( error )
