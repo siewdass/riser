@@ -8,7 +8,7 @@ export async function CDN( database, req, res ) {
 		if ( !project ) throw `project ${ req.query.project } not exist.` 
 
 		const { code } = await database.Function.findOne(
-			{ name: project.name, type: 'frontend' },
+			{ name: project.name, type: 'view' },
 			{ code: true, _id: false }
 		)
 

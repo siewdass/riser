@@ -17,7 +17,7 @@ export async function Webhook( database, { query, body }, res ) {
 		
 		const yaml = await fs.promises.readFile( '/riser.yml', 'utf-8' )
 		const config = load( yaml )
-		console.log( config )
+		console.log( config.riser )
 
 		await database.Function.deleteMany( { name: project.name } )
 		
@@ -31,13 +31,13 @@ export async function Webhook( database, { query, body }, res ) {
 		}
 
 		const { code } = transform( all, { presets: [ 'es2015', 'react' ] } )
-		await database.Function.create( { name: project.name, type: 'frontend', code } ) 
+		await database.Function.create( { name: project.name, type: 'view', code } ) 
 		
 		Object.keys( config.riser[ 'gateway' ] ).map( async app => {
 			const { path, handler, packages } = config.riser[ 'gateway' ][ app ]
 			const source = await fs.promises.readFile( handler, 'utf-8' )
 			const { code } = transform( source, { presets: [ 'es2015' ] } )
-			await database.Function.create( { name: project.name, path, type: 'backend', packages, code: code.replace( '"use strict";', '' ) } ) 
+			await database.Function.create( { name: project.name, path, type: 'gateway', packages, code: code.replace( '"use strict";', '' ) } ) 
 		} )
 		
 		res.json( {} )
