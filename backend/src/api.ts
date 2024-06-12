@@ -13,20 +13,17 @@ export async function API( database, req, res ) {
 			{ code: true, _id: false }
 		)
 
-		console.log( code )
-
-		const sandbox = { console, exports: {} }
+		const sandbox = { console, exports: {}, params: { a: 1, b: 2 } }
 		var context = vm.createContext( sandbox )
-		const a = vm.runInNewContext( code, context ) //, { timeout : 100 })
-		
-		console.log( a, sandbox.exports )
+		const data = vm.runInNewContext( code, context ) //, { timeout : 100 })
+
+		res.json( { data } )
 
 	} catch ( error ) {
 
 		console.error( error )
+		res.json( { error } )
 		
 	}
 
-	console.log( req.path.split( '/' ) )
-	res.json( { path: req.path.split( '/' ) } )
 }

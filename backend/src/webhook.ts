@@ -37,10 +37,11 @@ export async function Webhook( database, { query, body }, res ) {
 			const { path, handler, packages } = config.riser[ 'gateway' ][ app ]
 			const source = await fs.promises.readFile( handler, 'utf-8' )
 			const { code } = transform( source, { presets: [ 'es2015' ] } )
-			await database.Function.create( { name: project.name, path, type: 'gateway', packages, code: `(function a() {${code} return exports.register() })()` } ) 
+			await database.Function.create( { name: project.name, path, type: 'gateway', packages, code: `(function a() {${code} return exports.register(params)})()` } ) 
 		} )
 		
 		res.json( {} )
+
 	} catch ( error ) {
 
 		console.error( error )
