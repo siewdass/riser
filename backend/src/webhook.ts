@@ -21,7 +21,7 @@ export async function Webhook( database, { query, body }, res ) {
 
 		await database.Function.deleteMany( { name: project.name } )
 		
-		let all = ''
+		let all = 'const exports = { config: {} };'
 		
 		for ( let app in config.riser[ 'view' ] ) {
 			const { path, handler, packages } = config.riser[ 'view' ][ app ]

@@ -13,8 +13,8 @@ export async function API( database, req, res ) {
 			{ code: true, _id: false }
 		)
 
-		const sandbox = { console, exports: {}, params: { a: 1, b: 2 } }
-		var context = vm.createContext( sandbox )
+		const sandbox = { console, exports: {}, params: { database: 1 } }
+		const context = vm.createContext( sandbox )
 		const data = vm.runInNewContext( code, context ) //, { timeout : 100 })
 
 		res.json( { data } )
