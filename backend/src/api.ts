@@ -1,3 +1,5 @@
+import vm from 'vm'
+
 export async function API( database, req, res ) {
 
 	try {
@@ -6,14 +8,22 @@ export async function API( database, req, res ) {
 
 		if ( !project ) throw 'Project not exist.'
 
-		console.log( project.name )
-
 		const { code } = await database.Function.findOne(
 			{ name: project.name, type: 'gateway', path: `/${params[3]}` },
 			{ code: true, _id: false }
 		)
 
 		console.log( code )
+
+		var sandbox = {
+			console: console
+		}
+		
+		var context = vm.createContext( sandbox )
+		
+		const a = vm.runInNewContext( code, context ) //, { timeout : 100 })
+		console.log( a )
+
 	} catch ( error ) {
 
 		console.error( error )

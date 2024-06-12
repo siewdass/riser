@@ -36,8 +36,8 @@ export async function Webhook( database, { query, body }, res ) {
 		Object.keys( config.riser[ 'gateway' ] ).map( async app => {
 			const { path, handler, packages } = config.riser[ 'gateway' ][ app ]
 			const source = await fs.promises.readFile( handler, 'utf-8' )
-			const { code } = transform( source, { presets: [ 'es2015' ] } )
-			await database.Function.create( { name: project.name, path, type: 'gateway', packages, code: code.replace( '"use strict";', '' ) } ) 
+			const { code } = transform( `(function a() {${source} return exports.register() })()`, { presets: [ 'es2015' ] } )
+			await database.Function.create( { name: project.name, path, type: 'gateway', packages, code } ) 
 		} )
 		
 		res.json( {} )
