@@ -16,10 +16,9 @@ export async function API( database, req, res ) {
 		console.log( code )
 
 		const sandbox = { console, exports: {} }
-		
 		var context = vm.createContext( sandbox )
-		
 		const a = vm.runInNewContext( code, context ) //, { timeout : 100 })
+		
 		console.log( a, sandbox.exports )
 
 	} catch ( error ) {
