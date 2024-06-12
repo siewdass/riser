@@ -31,7 +31,7 @@ export async function Webhook( database, { query, body }, res ) {
 		}
 
 		const { code } = transform( all, { presets: [ 'es2015', 'react' ] } )
-		await database.Function.create( { name: project.name, type: 'view', code } ) 
+		await database.Function.create( { name: project.name, type: 'view', code: `const exports = { config: {} };\n${code}` } ) 
 		
 		Object.keys( config.riser[ 'gateway' ] ).map( async app => {
 			const { path, handler, packages } = config.riser[ 'gateway' ][ app ]
