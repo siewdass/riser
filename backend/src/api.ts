@@ -15,9 +15,7 @@ export async function API( database, req, res ) {
 
 		console.log( code )
 
-		var sandbox = {
-			console: console
-		}
+		const sandbox = { console, exports: {} }
 		
 		var context = vm.createContext( sandbox )
 		
