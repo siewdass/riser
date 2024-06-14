@@ -18,9 +18,15 @@ export async function Database( database, { body }, res ) {
 
 		const db = createConnection( `mongodb://localhost:27017/${body.project}?authSource=admin` )
 
-		const collection = (await db.listCollections()).map( ( { name } ) => ( { name } ) )
+		let values 
 
-		res.json( { tables: collection } )
+		if ( body.database == true ) {
+			values = ( await db.listCollections( ) ).map( ( { name } ) => ( { name } ) )
+		} else {
+			values = await db.collection( "user" ).find( )
+		}
+
+		res.json( { tables: values } )
 
 	} catch ( error ) {
 		
