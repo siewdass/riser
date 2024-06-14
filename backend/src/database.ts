@@ -16,12 +16,7 @@ export async function Database( database, { body }, res ) {
 		const project = await database.Project.findOne( { name: body.project } ) 
 		if ( !project ) throw `project ${ body.project } not exist.` 
 
-		const connection = createConnection( `mongodb://localhost:27017/${body.project}?authSource=admin` )
-
-		await new Promise((resolve, reject) => {
-      connection.once('open', resolve);
-      connection.once('error', reject);
-    } )
+		const connection = await createConnection( `mongodb://localhost:27017/${body.project}?authSource=admin` )
 
 		let values 
 
