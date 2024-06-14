@@ -27,13 +27,10 @@ export async function Database( database, { body }, res ) {
 		const tables = ( await connection.listCollections( ) ).map( ( { name } ) => name )
 
 		if ( body.database ) {
-			response = { tables }
+			response = tables
 		} else {
-			if ( tables.includes( body.table ) ) {
-				response = {
-					[ body.table ]: await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
-				}
-			}
+			if ( tables.includes( body.table ) ) throw `table ${ body.table } not exist.` 
+			response = await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
 		}
 
 		connection.close( )
