@@ -23,10 +23,13 @@ export async function Database( database, { body }, res ) {
 		if ( body.database == true ) {
 			values = ( await db.listCollections( ) ).map( ( { name } ) => ( { name } ) )
 		} else {
-			const collection = db.collection( "user" )
-			values = await collection.find( {} )
+      const collection = db.collection('user');
+      values = await collection.find({}).toArray();
 			console.log(values)
 		}
+
+
+		db.close( )
 
 		res.json( { tables: values } )
 
