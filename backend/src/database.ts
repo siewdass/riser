@@ -18,6 +18,11 @@ export async function Database( database, { body }, res ) {
 
 		const connection = createConnection( `mongodb://localhost:27017/${body.project}?authSource=admin` )
 
+		await new Promise((resolve, reject) => {
+      connection.once('open', resolve);
+      connection.once('error', reject);
+    } )
+
 		let values 
 
 		if ( body.database == true ) {
