@@ -1,4 +1,4 @@
-import { Collection, createConnection } from 'mongoose'
+import { createConnection } from 'mongoose'
 
 /*export class Database {
 	db
@@ -13,6 +13,7 @@ import { Collection, createConnection } from 'mongoose'
 export async function Database( database, { body }, res ) {
 
 	try {
+
 		const project = await database.Project.findOne( { name: body.project } ) 
 		if ( !project ) throw `project ${ body.project } not exist.` 
 
