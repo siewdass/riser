@@ -17,9 +17,9 @@ export async function Database( database, { body }, res ) {
 		const project = await database.Project.findOne( { name: body.project } ) 
 		if ( !project ) throw `project ${ body.project } not exist.` 
 
-		const conn2 = createConnection( `mongodb://localhost/${ project.name }` )
-		console.log(conn2)
-		res.json( {} )
+		const db = createConnection( `mongodb://localhost/${ project.name }` )
+		console.log(await db.listCollections())
+		res.json( { tables: await db.listCollections() } )
 
 	} catch ( error ) {
 		
