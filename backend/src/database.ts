@@ -13,7 +13,7 @@ import { createConnection } from 'mongoose'
 export async function Database( database, { body }, res ) {
 
 	try {
-
+		console.log(body.project)
 		const project = await database.Project.findOne( { name: body.project } ) 
 		if ( !project ) throw `project ${ body.project } not exist.` 
 
