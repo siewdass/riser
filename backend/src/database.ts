@@ -23,19 +23,19 @@ export async function Database( database, { body }, res ) {
       connection.once( 'error', reject )
     } )
 
-		let response
+		let data
 		const tables = ( await connection.listCollections( ) ).map( ( { name } ) => name )
 
 		if ( body.database ) {
-			response = tables
+			data = tables
 		} else {
 			if ( !tables.includes( body.table ) ) throw `table ${ body.table } not exist.` 
-			response = await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
+			data = await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
 		}
 
 		connection.close( )
 
-		res.json( response )
+		res.json( { data } )
 
 	} catch ( error ) {
 		
