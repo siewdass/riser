@@ -16,21 +16,29 @@ export async function Database( database, { body }, res ) {
 		const project = await database.Project.findOne( { name: body.project } ) 
 		if ( !project ) throw `project ${ body.project } not exist.` 
 
-		const connection = await createConnection( `mongodb://localhost:27017/${body.project}?authSource=admin` )
+		const connection = createConnection( `mongodb://localhost:27017/${body.project}?authSource=admin` )
 
-		let values 
+		await new Promise( ( resolve, reject ) => {
+      connection.once( 'open', resolve )
+      connection.once( 'error', reject )
+    } )
 
-		if ( body.database == true ) {
-			values = ( await connection.listCollections( ) ).map( ( { name } ) => ( { name } ) )
+		let response
+		const tables = ( await connection.listCollections( ) ).map( ( { name } ) => name )
+
+		if ( body.database ) {
+			response = { tables }
 		} else {
-      const collection = connection.db.collection('user');
-      values = await collection.find({}).toArray();
-			console.log(values)
+			if ( tables.includes( body.table ) ) {
+				response = {
+					[ body.table ]: await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
+				}
+			}
 		}
 
 		connection.close( )
 
-		res.json( { tables: values } )
+		res.json( response )
 
 	} catch ( error ) {
 		
