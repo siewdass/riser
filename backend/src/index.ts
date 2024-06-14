@@ -7,6 +7,7 @@ dotenv.config( )
 import { API } from './api'
 import { Webhook } from './webhook'
 import { Project } from './project'
+import { Database } from './database'
 import { CDN } from './cdn'
 
 const database = createConnection( `${process.env.MONGO_URI}` )
@@ -25,13 +26,16 @@ app.use( ( req: Request, res: Response, next: NextFunction ) => {
 	next( )
 } )
 
-app.get( '/', ( req: Request, res: Response ) => res.send( 'sdas' ) )
+app.get( '/', ( req: Request, res: Response ) => res.send( 'Riser' ) )
 
 // BUILD
 app.post( '/webhook', ( req: Request, res: Response ) => Webhook( database.models, req, res ) )
 
 // PROJECTS
 app.post( '/project', ( req: Request, res: Response ) => Project( database.models, req, res ) )
+
+// DATABASES
+app.post( '/database', ( req: Request, res: Response ) => Database( database.models, req, res ) )
 
 // FRONTEND FUNCTIONS
 app.get( '/cdn.js', ( req: Request, res: Response ) => CDN( database.models, req, res ) )
