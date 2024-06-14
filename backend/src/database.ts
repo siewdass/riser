@@ -16,20 +16,19 @@ export async function Database( database, { body }, res ) {
 		const project = await database.Project.findOne( { name: body.project } ) 
 		if ( !project ) throw `project ${ body.project } not exist.` 
 
-		const db = createConnection( `mongodb://localhost:27017/${body.project}?authSource=admin` )
+		const connection = createConnection( `mongodb://localhost:27017/${body.project}?authSource=admin` )
 
 		let values 
 
 		if ( body.database == true ) {
-			values = ( await db.listCollections( ) ).map( ( { name } ) => ( { name } ) )
+			values = ( await connection.listCollections( ) ).map( ( { name } ) => ( { name } ) )
 		} else {
-      const collection = db.collection('user');
+      const collection = connection.db.collection('user');
       values = await collection.find({}).toArray();
 			console.log(values)
 		}
 
-
-		db.close( )
+		connection.close( )
 
 		res.json( { tables: values } )
 
