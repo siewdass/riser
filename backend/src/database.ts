@@ -29,7 +29,7 @@ export async function Database( database, { body }, res ) {
 		if ( body.database ) {
 			response = tables
 		} else {
-			if ( tables.includes( body.table ) ) throw `table ${ body.table } not exist.` 
+			if ( !tables.includes( body.table ) ) throw `table ${ body.table } not exist.` 
 			response = await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
 		}
 
