@@ -1,3 +1,5 @@
+import { v4 as uuid } from 'uuid'
+
 export async function Project( database, { body: { project, repository, branch } }, res ) {
 
 	await database.Project.updateOne( { name: project }, { repository, branch }, { upsert: true } ) 
@@ -5,9 +7,65 @@ export async function Project( database, { body: { project, repository, branch }
 	res.json( {} )
 }
 
-export async function GetProject( database, { body: { project } }, res ) {
-	res.json( await database.Function.find(
-		{ name: project.name, type: 'frontend' },
-		{ path: true, code: true, _id: false }
-	) )
+export async function createProject( database, req, res ) {
+	try {
+
+		const { email, name } = req.body
+
+		const project = await database.Project.findOne( { email, name } ) 
+		if ( project ) throw `project ${ name } already exist.` 
+
+		await database.Project.create( { id: uuid(), email, name } )
+
+		res.status( 200 ).json( {} )
+
+	} catch ( error ) {
+		
+		console.error( error )
+		res.status( 400 ).json( { error } )
+
+	}
+}
+
+export async function getProjects( database, req, res ) {
+	try {
+
+		const data = await database.Project.find( { email: req.body.email } ) 
+		res.status( 200 ).json( { data } )
+
+	} catch ( error ) {
+		
+		console.error( error )
+		res.status( 400 ).json( { error } )
+
+	}
+}
+
+export async function updateProjects( database, req, res ) {
+	try {
+
+		const data = await database.Project.updateOne( { name: req.body.name, email: req.body.email }, req.body.project ) 
+
+		res.status( 200 ).json( { data } )
+
+	} catch ( error ) {
+		
+		console.error( error )
+		res.status( 400 ).json( { error } )
+
+	}
+}
+
+export async function deleteProject( database, req, res ) {
+	try {
+
+		const data = await database.Project.deleteOne( { name: req.body.name, email: req.body.email } )
+		res.status( 200 ).json( { data } )
+
+	} catch ( error ) {
+		
+		console.error( error )
+		res.status( 400 ).json( { error } )
+
+	}
 }

@@ -35,7 +35,7 @@ export async function Login( database, req, res ) {
 		const account = await database.Account.findOne( { email } )
 		if ( !account ) throw 'Account not exist.'
 
-		const match = ( req.body.password === account.password ) 
+		const match = await bcrypt.compare( req.body.password, account.password )
 		if ( !match ) throw 'Password not match.'
     
 		const now = new Date( )
@@ -57,23 +57,26 @@ export async function Authorization( database, req, res, next ) {
 
 	try {
 
-		const token = req.headers.authorization.split( ' ' )[ 1 ]
-		if ( !token ) throw 'Not Authorized.'
+		if ( ![ '/account/login', '/account/register' ].includes( req.path ) ) {
+			const token = req.headers.authorization.split( ' ' )[ 1 ]
+			if ( !token ) throw 'Not Authorized.'
+	
+			const { email } = await jwt.verify( token, process.env.SECRET_KEY )
+			if ( !email ) throw 'Not Authorized.'
+	
+			const account = await database.Account.findOne( { email } )
+			if ( !account ) throw 'Not Authorized.'
+	
+			req.body[ 'email' ] = email
+		}
 
-		const { email } = await jwt.verify( token, process.env.SECRET_KEY )
-		if ( !email ) throw 'Not Authorized.'
-
-		const account = await database.Account.findOne( { email } )
-		if ( !account ) throw 'Not Authorized.'
-
-		req.body[ 'email' ] = email 
+		next( )
 
 	} catch ( error ) {
 
 		console.error( error )
+		res.status( 401 ).send( error )
 
 	} 
 
-	next( )
-  
 }

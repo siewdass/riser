@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Oswald:wght@200..700&display=swap');
+
+input[type="text" i], input[type="email" i], input[type="password" i] {
+  padding-block: 0px;
+  padding-inline: 0px;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+html, body, #root {
+  padding: 0px;
+  margin: 0px;
+  height: 100vh;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Oswald";
+}
+
+:-webkit-autofill {
+  transition: all 100000s ease-in-out 0s;
+}

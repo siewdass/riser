@@ -9,15 +9,17 @@ import { Webhook } from './webhook'
 import { Project } from './project'
 import { Database } from './database'
 import { CDN } from './cdn'
+import { Register, Login, Authorization } from './account'
 
 const database = createConnection( `${process.env.MONGO_URI}` )
 database.model( 'Project', new Schema( { name: String, repository: String, branch: String } ) )
 database.model( 'Function', new Schema( { name: String, path: String, code: String, packages: Array, type: String } ) )
-database.model( 'Account', new Schema( { email: String, password: String } ) )
+database.model( 'Account', new Schema( { id: String, email: String, password: String } ) )
 
 const app: Express = express()
 
 app.use( express.json( ) )
+
 app.use( ( req: Request, res: Response, next: NextFunction ) => {
 	res.setHeader( 'Access-Control-Allow-Origin', '*' )
 	res.setHeader( 'Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE' )
@@ -27,6 +29,11 @@ app.use( ( req: Request, res: Response, next: NextFunction ) => {
 } )
 
 app.get( '/', ( req: Request, res: Response ) => res.send( 'Riser' ) )
+
+// ACCOUNT
+app.post( '/account/register', ( req: Request, res: Response ) => Register( database.models, req, res ) )
+app.post( '/account/login', ( req: Request, res: Response ) => Login( database.models, req, res ) )
+app.use( ( req: Request, res: Response, next: NextFunction ) => Authorization( database.models, req,res,next ) )
 
 // BUILD
 app.post( '/webhook', ( req: Request, res: Response ) => Webhook( database.models, req, res ) )

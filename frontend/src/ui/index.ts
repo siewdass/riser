@@ -8,3 +8,6 @@ export { Col } from './col'
 export { Animate } from './animate'
 export { Action } from './action'
 export { Touchable } from './touchable'
+export { Table } from './table'
+
+import './style.css'

@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' )
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' )
 const Dotenv = require( 'dotenv-webpack' )
 const { config } = require( 'dotenv' )
 
@@ -11,7 +10,7 @@ module.exports = {
   target: 'web',
   entry: [ './src/index.tsx' ],
   resolve: {
-    extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
+    extensions: [ '.ts', '.tsx', '.js', '.jsx', '.css' ],
   },
   output: {
     publicPath: '/',
@@ -33,7 +32,11 @@ module.exports = {
             presets: [ '@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript' ],
           },
         },
-      }
+      },
+      { 
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
+      },
     ],
   },
   plugins: [
@@ -41,8 +44,7 @@ module.exports = {
       favicon: path.join( __dirname, './src', 'favicon.ico' ),
       templateContent: '<!DOCTYPE html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0"></head><body><div id="root"></div></body></html>'
     } ),
-    new Dotenv( { systemvars: true } ),
-    new MiniCssExtractPlugin( ),
+    new Dotenv( { systemvars: true } )
   ],
   stats: {
     modules: false,

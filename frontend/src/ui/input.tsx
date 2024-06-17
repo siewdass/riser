@@ -1,5 +1,6 @@
-import { CSSProperties, ReactElement, useState } from 'react'
+import React, { CSSProperties, ReactElement, useState } from 'react'
 import { Theme } from '../services/theme'
+import { error } from 'console'
 
 export function Input( props ): ReactElement {
 	const { color, light, dark, radius } = Theme()
@@ -7,55 +8,47 @@ export function Input( props ): ReactElement {
 	const [ focus, setFocus ] = useState( false )
 	const [ active, setActive ] = useState( false )
 
+	const floating: any = {
+		position: 'absolute',
+		padding: 2,
+		transition: 'all .1s ease-in',
+		userSelect: 'none',
+		pointerEvents: 'none',
+		background: 'red',
+		textTransform: 'capitalize',
+		fontWeight: 'bold'
+	}
+
 	const styles: { [ key: string ]: CSSProperties } = {
 		container: {
 			position: 'relative'
 		},
 		input: {
-			WebkitBoxShadow: `0 0 0 30px ${props.background || color} inset`,
-			WebkitTextFillColor: props.color || light,
+			WebkitBoxShadow: `0 0 0 30px inherit inset`,
+			WebkitTextFillColor: active || focus ? color : dark,
 			textIndent: '.5rem',
-			border: props.color ? `.1rem solid ${props.color}` : ( focus || hover ? `.1rem solid ${dark}` : `.1rem solid ${light}` ),
+			border: focus || hover ? `.1rem solid ${color}` : `.1rem solid ${dark}`,
 			padding: '.85rem',
-			color: props.color || 'white',
 			width: '100%',
 			borderRadius: radius,
 			outline: 'none',
 			fontSize: '0.8rem',
+			background: 'inherit'
 		},
-		title: {
-			position: 'absolute',
-			padding: '.4rem',
-			transition: 'all .1s ease-in',
-			userSelect: 'none',
-			pointerEvents: 'none',
-			background: props.background || color,
-			textTransform: 'capitalize',
-			... active || focus ? {
-				top: '-.80rem',
-				left: '1rem',
-				fontSize: '0.7rem',
-			} : {
-				top: '.45rem',
-				left: '.8rem',
-				fontSize: '0.8rem',
-			},
-			... focus || hover ? {
-				color: dark
-			} : {
-				color: props.color || light,
-			}
+		label: {
+			...floating,
+			left: '1.2rem',
+			top: active || focus ? '-.60rem' : '.50rem',
+			fontSize: active || focus ?  '0.7rem' : '1rem',
+			color: active || focus ? color : dark,
+			background: active || focus ? light : '',
 		},
 		error: {
-			position: 'absolute',
-			padding: '.4rem',
-			transition: 'all .1s ease-in',
-			userSelect: 'none',
-			background: color,
-			top: '2rem',
+			...floating,
+			top: '1.85rem',
 			right: '1rem',
 			fontSize: '0.7rem',
-			color: 'red',
+			color: 'red'
 		}
 	}
 
@@ -66,18 +59,15 @@ export function Input( props ): ReactElement {
 			onMouseLeave={ e => setHover( false ) }
 		>
 			<input
-				type={ props.form[ props.name ].type || props.type }
-				{ ...props.form.register( props.name, props.form[ props.name ] ) }
-				onInput={ ( e: any ) => e.target.value ? setActive( true ) : setActive( false ) }
+				type={ props.form.validations[ props.name ].type }
+				{ ...props.form.register( props.name, props.form.validations[ props.name ] ) }
+				onInput={ ( e: any ) => setActive( e.target.value ? true : false ) }
 				onFocus={ e => setFocus( true ) }
 				onBlur={ e => setFocus( false ) }
 				style={ styles.input }
 			/>
-			<label
-				style={ styles.title }
-			>{ props.name }
-			</label>
-			{props.form.errors[ props.name ] ? <label style={ styles.error } >{ props.form.errors[ props.name ]?.message }</label> : null}
+			<label style={ styles.label } >{ props.name }</label>
+			{ props.form.errors[ props.name ] ? <label style={ styles.error } >{ props.form.errors[ props.name ]?.message }</label> : null}
 		</div>
 	)
 }
