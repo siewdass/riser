@@ -15,9 +15,9 @@ export async function createProject( database, req, res ) {
 		const project = await database.Project.findOne( { email, name } ) 
 		if ( project ) throw `project ${ name } already exist.` 
 
-		await database.Project.create( { id: uuid(), email, name } )
+		const data = await database.Project.create( { id: uuid(), email, name } )
 
-		res.status( 200 ).json( {} )
+		res.status( 200 ).json( { data } )
 
 	} catch ( error ) {
 		
@@ -44,6 +44,9 @@ export async function getProjects( database, req, res ) {
 export async function updateProjects( database, req, res ) {
 	try {
 
+		const project = await database.Project.findOne( { name: req.body.name, email: req.body.email } ) 
+		if ( !project ) throw `project ${ req.body.name } not exist.` 
+
 		const data = await database.Project.updateOne( { name: req.body.name, email: req.body.email }, req.body.project ) 
 
 		res.status( 200 ).json( { data } )
@@ -58,6 +61,9 @@ export async function updateProjects( database, req, res ) {
 
 export async function deleteProject( database, req, res ) {
 	try {
+
+		const project = await database.Project.findOne( { name: req.body.name, email: req.body.email } ) 
+		if ( !project ) throw `project ${ req.body.name } not exist.` 
 
 		const data = await database.Project.deleteOne( { name: req.body.name, email: req.body.email } )
 		res.status( 200 ).json( { data } )
