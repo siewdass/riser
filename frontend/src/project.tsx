@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Theme } from './services/theme'
 
+import { Navbar } from './components/navbar'
+
 export function Project() {
 	const navigate = useNavigate( )
 	const { color, light } = Theme()
@@ -47,17 +49,10 @@ export function Project() {
 
 	return (
 		<Box>
-			<Row background={ color } justify={ 'space-between' } padding={ '10px 25px 10px 25px' }>
-				<Row align={ 'center' }>
-					<Text label={ 'Project' } padding={ 10 } color={ 'white' } size={ 20 }/>
-				</Row>
-				<Row align={ 'center' }>
-					<FontAwesomeIcon icon={ 'list' } color={ 'white' } size="xl" />
-				</Row>
-			</Row>
+			<Navbar />
 
 			{ view === 'create' ? 		
-				<Col gap={ 10 } background={ light } grow padding={ 20 }>
+				<Col gap={ 20 }  grow padding={ 20 }>
 					<Text label={ 'Create new project' } size={ 20 }/>
 					<Input name={ 'name' } form={ login } />
 					<Input name={ 'description' } form={ login } />

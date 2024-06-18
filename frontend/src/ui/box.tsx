@@ -2,8 +2,7 @@ import React, { CSSProperties, ReactElement, useState } from 'react'
 import { Theme } from '../services/theme'
 
 export function Box( props: any ): ReactElement {
-
-
+	const { color, light } = Theme()
 
 	const style: CSSProperties = { 
 		display: 'flex',
@@ -18,7 +17,7 @@ export function Box( props: any ): ReactElement {
 		gap: props.gap,
 		alignItems: props.align,
 		justifyContent: props.justify,
-		background: props.background
+		background: props.background || light
 	}
 
 	return <div style={ { ...style, ...props.style } }>{ props.children }</div>
