@@ -1,43 +1,65 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Row, Col, Table, Button, Text } from '../ui'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Theme } from '../services/theme'
 
-function Icon( {name, color} ) {
+function Link( { path, icon } ) {
+  const { dark } = Theme()
   const [ hover, setHover ] = useState( false)
+  const navigate = useNavigate( )
+  const location = useLocation( )
   return ( 
     <FontAwesomeIcon
-      icon={ name }
-      color={ color }
-      size="xl"
+      icon={ icon }
+      color={ 'white' }
+      size="lg"
       onMouseEnter={() => setHover( true ) }
       onMouseLeave={() => setHover( false ) }
-      style={{ padding: 5, borderBottom: hover ? '2px solid red' : 'none', width: '20%' }}
+      onClick={ () => location.pathname !== path ? navigate( path ) : null }
+      style={{ padding: 9, borderBottom: location.pathname == path ? `2px solid ${dark}` : 'none', width: '25%' }}
     />
   )
 }
 
-export function Navbar( ) {
+export function Navbar( props ) {
+
+  const [ isMobile, setIsMobile ] = useState( window.innerHeight > window.innerWidth )
+  const onResize = () => setIsMobile( window.innerHeight > window.innerWidth )
+  
+  useEffect( ( ) => {
+    onResize( )
+    window.addEventListener( "resize", onResize )
+    return () => window.removeEventListener( "resize", onResize )
+  }, [] )
+
 	const { color, light } = Theme()
+  const views: any = [
+    { path: '/project', icon: 'diagram-project' },
+    { path: '/database', icon: 'database' },
+    { path: '/project2', icon: 'terminal' },
+    { path: '/project3', icon: 'chart-simple' },
+    { path: '/project4', icon: 'user' },
+  ]
 
 	return (
-		<Col>
-      <Row background={ color } justify={ 'space-between' } padding={ '10px 25px 10px 25px' }>
+		<Col background={ color } padding={ '7px 25px 7px 25px' }>
+      <Row justify={ 'space-between' } height={ 40 }>
         <Row align={ 'center' }>
           <Text label={ 'Project' } padding={ 10 } color={ 'white' } size={ 20 }/>
         </Row>
-        <Row align={ 'center' }>
-          <FontAwesomeIcon icon={ 'list' } color={ 'white' } size="xl" />
-        </Row>
+        { !isMobile ? 
+          <Row justify={ 'space-between' } gap={ 50 }>
+            { views.map( ( item, index ) => <Link key={ index } path={ item.path } icon={ item.icon } /> ) }
+          </Row> : null
+        }
+        { props.actions ? props.actions : null }
       </Row>
-      <Row background={ color } justify={ 'space-between' } padding={ '0px' } gap height={40}>
-        <Icon name={ 'diagram-project' } color={ 'white' } />
-        <Icon name={ 'database' } color={ 'white' } />
-        <Icon name={ 'terminal' } color={ 'white' }/>
-        <Icon name={ 'chart-simple' } color={ 'white' } />
-        <Icon name={ 'user' } color={ 'white' } />
-      </Row>
+      { isMobile ? 
+        <Row justify={ 'space-between' } gap height={ 40 } margin={ '0px -25px -7px -25px' }>
+          { views.map( ( item, index ) => <Link key={ index } path={ item.path } icon={ item.icon } /> ) }
+        </Row> : null
+      }
     </Col>
 	)
 }

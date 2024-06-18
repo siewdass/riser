@@ -1,23 +1,17 @@
 import { v4 as uuid } from 'uuid'
 
-export async function Project( database, { body: { project, repository, branch } }, res ) {
-
-	await database.Project.updateOne( { name: project }, { repository, branch }, { upsert: true } ) 
-
-	res.json( {} )
-}
-
 export async function createProject( database, req, res ) {
 	try {
 
-		const { email, name } = req.body
+		const { email, name, repository, branch, username, token } = req.body
+		console.log(email)
 
 		const project = await database.Project.findOne( { email, name } ) 
 		if ( project ) throw `project ${ name } already exist.` 
 
-		const data = await database.Project.create( { id: uuid(), email, name } )
+		const data = await database.Project.create( { id: uuid(), email, name, repository, branch, username, token } )
 
-		res.status( 200 ).json( { data } )
+		res.status( 200 ).json( { } )
 
 	} catch ( error ) {
 		
@@ -27,7 +21,7 @@ export async function createProject( database, req, res ) {
 	}
 }
 
-export async function getProjects( database, req, res ) {
+export async function readProjects( database, req, res ) {
 	try {
 
 		const data = await database.Project.find( { email: req.body.email } ) 

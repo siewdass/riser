@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { CSSProperties, useState } from 'react'
 import { Theme } from '../services/theme'
-import { isTouch } from '../services/device'
 
 export const Button = ( props ) => {
 	const { light, medium, dark, radius, color } = Theme()
@@ -10,8 +9,8 @@ export const Button = ( props ) => {
 
 	const style: CSSProperties = {
 		width: props.width || '100%',
-		height: props.height || 42,
-		border: `1px solid ${dark}`,
+		height: props.height || 48,
+		border: `.1px solid ${dark}`,
 		color: hover ? 'white' : dark,
 		borderRadius: radius,
 		fontSize: '1rem',
@@ -27,7 +26,7 @@ export const Button = ( props ) => {
 
 	return (
 		<div
-			style={ style }
+			style={ {...style, ...props.style } }
 			onClick={ props?.onClick }
 			onMouseEnter={ () => setHover( true ) }
 			onMouseLeave={ () => setHover( false ) }

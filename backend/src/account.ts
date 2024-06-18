@@ -57,26 +57,26 @@ export async function Authorization( database, req, res, next ) {
 
 	try {
 
-		if ( ![ '/account/login', '/account/register' ].includes( req.path ) ) {
-			const token = req.headers.authorization.split( ' ' )[ 1 ]
-			if ( !token ) throw 'Not Authorized.'
-	
-			const { email } = await jwt.verify( token, process.env.SECRET_KEY )
-			if ( !email ) throw 'Not Authorized.'
-	
-			const account = await database.Account.findOne( { email } )
-			if ( !account ) throw 'Not Authorized.'
-	
-			req.body[ 'email' ] = email
-		}
+		const authorization = req.headers.authorization
+		if ( !authorization ) throw 'Not Authorized.'
 
-		next( )
+		const token = authorization.split( ' ' )[ 1 ]
+		if ( !token ) throw 'Not Authorized.'
+
+		const { email } = await jwt.verify( token, process.env.SECRET_KEY )
+		if ( !email ) throw 'Not Authorized.'
+
+		const account = await database.Account.findOne( { email } )
+		if ( !account ) throw 'Not Authorized.'
+
+		req.body.email = email
 
 	} catch ( error ) {
 
-		console.error( error )
-		res.status( 401 ).send( error )
+		//console.error( error )
+		//res.status( 401 ).send( error )
+	}
 
-	} 
+	next( )
 
 }

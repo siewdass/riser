@@ -2,6 +2,7 @@ import React from "react"
 import ReactDOM from "react-dom/client"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Project } from './project'
+import { Database } from './database'
 import { User } from './user'
 import { library } from '@fortawesome/fontawesome-svg-core';
 import * as Icons from '@fortawesome/free-solid-svg-icons';
@@ -16,6 +17,7 @@ const router = createBrowserRouter( [
   { path: "/", element: <div>Login</div> },
 	{ path: "/user", element: <User /> },
 	{ path: "/project", element: <Project /> },
+  { path: "/database", element: <Database /> },
 ] )
 
 const root = document.getElementById( 'root' )
