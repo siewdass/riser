@@ -60,7 +60,7 @@ export function User() {
 					{ view ? <Input name={ 'repeat password' } form={ login } /> : null }
 				</Col>
 
-				<Col gap={ 12 }>
+				<Col gap={ 12 } style={{marginBottom: 20}}>
 					<Text label={ view ? 'Already have account?' : 'Dont have account?' } onClick={ () => setView( !view )  } center/>
 					<Button label={ view ? 'Register' : 'Login' } onClick={ onLogin( submit ) }/> 
 				</Col>
