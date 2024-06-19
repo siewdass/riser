@@ -73,10 +73,10 @@ export async function Authorization( database, req, res, next ) {
 
 	} catch ( error ) {
 
-		//console.error( error )
+		console.error( error, req.url )
 		//res.status( 401 ).send( error )
 	}
-
+	
 	next( )
 
 }

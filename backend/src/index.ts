@@ -22,7 +22,7 @@ app.use( express.json( ) )
 
 app.use( ( req: Request, res: Response, next: NextFunction ) => {
 	res.setHeader( 'Access-Control-Allow-Origin', '*' )
-	res.setHeader( 'Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE' )
+	res.setHeader( 'Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE' )
 	res.setHeader( 'Access-Control-Allow-Headers', 'Content-Type,Authorization' )
 	res.setHeader( 'Access-Control-Allow-Credentials', true )
 	next( )
@@ -40,7 +40,7 @@ app.post( '/webhook', ( req: Request, res: Response ) => Webhook( database.model
 
 // PROJECTS
 app.post( '/project/create', ( req: Request, res: Response ) => createProject( database.models, req, res ) )
-app.post( '/project/read', ( req: Request, res: Response ) => readProjects( database.models, req, res ) )
+app.get( '/project/read', ( req: Request, res: Response ) => readProjects( database.models, req, res ) )
 app.post( '/project/update', ( req: Request, res: Response ) => updateProjects( database.models, req, res ) )
 app.post( '/project/delete', ( req: Request, res: Response ) => deleteProject( database.models, req, res ) )
 

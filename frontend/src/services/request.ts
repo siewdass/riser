@@ -1,6 +1,6 @@
 const API = `${location.protocol}//${window.location.hostname}:3000`
 
-export async function Request( method: string, endpoint: string, body: any = {} ) {
+export async function Request( method: string, endpoint: string, data: any = {} ) {
 	try {
 		const response = await fetch( API + endpoint, {
 			method,
@@ -8,9 +8,11 @@ export async function Request( method: string, endpoint: string, body: any = {} 
 				'Content-Type': 'application/json',
 				'Authorization': `Bearer ${localStorage.getItem( 'token' )}`
 			},
-			... method !== 'GET' ? { body: JSON.stringify( body ) } : null
+			... method !== 'GET' ? { body: JSON.stringify( data ) } : null
 		} )
-		return response.json( )
+		const res = await response.json( )
+		console.log( method, endpoint, res )
+		return res
 	} catch ( err ) {
 		return err
 	}

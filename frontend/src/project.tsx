@@ -17,20 +17,12 @@ export function Project() {
 	const [ reload, setReload ] = useState( 0 )
 
 	const get = async ( ) => {
-		const response = fetch( `${location.protocol}//${window.location.hostname}:3000` + '/project/create', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem( 'token' )}` },
-			body: JSON.stringify( { name: '2', repository: 'da', branch: '2', username: '2131', token: 123} )
-		} )
+		const response = await Request( 'GET', '/project/read' )
+		setProjects( response.data )
 	}
 
 	useEffect( () => {
-		const response = fetch( `${location.protocol}//${window.location.hostname}:3000` + '/project/create', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem( 'token' )}` },
-			body: JSON.stringify( { name: '2', repository: 'da', branch: '2', username: '2131', token: 123} )
-		} )
-	
+		get( )
 	}, []) 
 
 	const [ login, onLogin ] = useForm( {
@@ -47,8 +39,8 @@ export function Project() {
  	}, [])
 
 	const submit = async data => {
-    const response = await Request( 'POST', '/project/create', data )
-		console.log( data, response )
+    //const response = await Request( 'POST', '/project/create', data )
+		//console.log( data, response )
 	}
 
 	return (
@@ -58,7 +50,7 @@ export function Project() {
 				actions={
 					<Row align={ 'center' }>
 						<FontAwesomeIcon
-							icon={ 'plus' }
+							icon={ view == 'create' ? 'list' : 'plus' }
 							color={ 'white' }
 							size="xl"
 							style={ { width: '30px',padding: '3px' } }
@@ -80,7 +72,7 @@ export function Project() {
 					<Button label={ 'Create' } onClick={ onLogin( submit ) } /> 
 				</Col> :
 				<>
-					{ projects.map( ( { name } )=> <>{ name }</> ) }
+					{ projects.map( ( item: any, index )=> <div key={ index }>{ item?.name }</div> ) }
 				</>
 			}
 		</Box>
