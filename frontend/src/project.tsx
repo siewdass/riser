@@ -8,17 +8,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Theme } from './services/theme'
 
 import { Navbar } from './components/navbar'
+import { Loader } from './components/loader'
 
 export function Project() {
 	const navigate = useNavigate( )
 	const { color, light } = Theme()
-	const [ view, setView ] = useState( 'create' )
+	const [ view, setView ] = useState( 'projects' )
 	const [ projects, setProjects ] = useState( [] )
 	const [ reload, setReload ] = useState( 0 )
 
 	const get = async ( ) => {
 		const response = await Request( 'GET', '/project/read' )
-		setProjects( response.data )
+		if ( response.data.length > 0 ) {
+			setProjects( response.data )
+		} else {
+			setView( 'create' )
+		}
 	}
 
 	useEffect( () => {
@@ -39,8 +44,7 @@ export function Project() {
  	}, [])
 
 	const submit = async data => {
-    //const response = await Request( 'POST', '/project/create', data )
-		//console.log( data, response )
+    const response = await Request( 'POST', '/project/create', data )
 	}
 
 	return (
@@ -50,15 +54,17 @@ export function Project() {
 				actions={
 					<Row align={ 'center' }>
 						<FontAwesomeIcon
-							icon={ view == 'create' ? 'list' : 'plus' }
+							icon={ view == 'create' ? 'table-list' : 'plus' }
 							color={ 'white' }
 							size="xl"
-							style={ { width: '30px',padding: '3px' } }
-							onClick={ () => setView( view == 'create' ? 'list' : 'create' ) }
+							style={ {  } }
+							onClick={ () => setView( view == 'create' ? 'projects' : 'create' ) }
 						/>
 					</Row>
 				}
 			/>
+
+			{/* projects.length > 0 ? <Loader /> : null */}
 
 			{ view === 'create' ? 		
 				<Col gap={ 20 } grow padding={ 20 }>
@@ -71,10 +77,11 @@ export function Project() {
 					<div style={{display:'flex', flexGrow: 1}}></div>
 					<Button label={ 'Create' } onClick={ onLogin( submit ) } /> 
 				</Col> :
-				<>
-					{ projects.map( ( item: any, index )=> <div key={ index }>{ item?.name }</div> ) }
-				</>
+				<Col grow padding={ 20 }>
+					{ projects?.map( ( item: any, index )=> <div key={ index }>{ item?.name }</div> ) }
+				</Col>
 			}
+
 		</Box>
 	)
 }
