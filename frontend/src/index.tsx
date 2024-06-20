@@ -1,6 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, RouterProvider, useNavigate } from "react-router-dom"
 import { Project } from './project'
 import { Database } from './database'
 import { User } from './user'
@@ -13,8 +13,14 @@ const iconList = Object.keys(Icons)
 
 library.add(...iconList);
 
+function Home( ) {
+  const navigate = useNavigate( )
+  navigate( '/user' )
+  return <></>
+}
+
 const router = createBrowserRouter( [
-  { path: "/", element: <div>Login</div> },
+  { path: "/", element: <Home /> },
 	{ path: "/user", element: <User /> },
 	{ path: "/project", element: <Project /> },
   { path: "/database", element: <Database /> },
