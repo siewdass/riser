@@ -12,15 +12,16 @@ import { Loader } from './components/loader'
 
 export function Project() {
 	const navigate = useNavigate( )
-	const { color, light } = Theme()
+	const { color, light, dark } = Theme()
 	const [ view, setView ] = useState( 'projects' )
 	const [ projects, setProjects ] = useState( [] )
-	const [ reload, setReload ] = useState( 0 )
+	const [ loading, setLoading ] = useState( true )
 
 	const getProjects = async ( ) => {
 		const response = await Request( 'GET', '/project/read' )
-		if ( response.data.length > 0 ) {
+		if ( response?.data.length > 0 ) {
 			setProjects( response.data )
+			setTimeout( () => setLoading( false ), 500 )
 		} else {
 			setView( 'create' )
 		}
@@ -68,10 +69,8 @@ export function Project() {
 				}
 			/>
 
-			{/* projects.length > 0 ? <Loader /> : null */}
-
-			{ view === 'create' ? 		
-				<Col gap={ 20 } grow padding={ 20 }>
+			{ loading ? <Loader /> : <>{ view === 'create' ? 		
+				<Col gap={ 20 } grow padding={ 20 } >
 					<Text label={ 'Create new project' } size={ 20 }/>
 					<Input name={ 'name' } form={ login } />
 					<Input name={ 'repository' } form={ login } />
@@ -81,11 +80,29 @@ export function Project() {
 					<div style={{display:'flex', flexGrow: 1}}></div>
 					<Button label={ 'Create' } onClick={ onLogin( submit ) } /> 
 				</Col> :
-				<Col grow padding={ 20 }>
-					{ projects?.map( ( item: any, index )=> <div key={ index }>{ item?.name }</div> ) }
+				<Col grow padding={ 20 } gap={ 20 } style={{overflow: 'scroll'}}>
+					<Text label={ 'Your projects' } size={ 20 }/>
+					{ projects?.map( ( { name, branch, repository, token, username }, index ) =>
+						<Col key={ index } padding={ 15 } radius={ 10 } border={ `.1px solid ${dark}` }>
+							<Row justify={ 'space-between' } style={{ borderBottom: `.1px solid ${dark}`, paddingBottom: 15, marginBottom: 10 }}>
+								<Text label={ name } transform={ 'uppercase' } />
+								<Row >
+									<FontAwesomeIcon icon={ 'square-plus' } color={ color } size="xl" onClick={ () => {} } />
+									<FontAwesomeIcon icon={ 'square-minus' } color={ color } size="xl" onClick={ () => {} } />
+								</Row>
+							</Row>
+							<Row>
+								<Text label={ 'Branch: ' } color={ color } />
+								<Text label={ branch } transform={ 'lowercase' } max />
+							</Row>
+							<Row>
+								<Text label={ 'Repository: ' } color={ color } /><Text label={ repository } transform={ 'lowercase' } max /></Row>
+							<Row><Text label={ 'Username: ' } color={ color } /><Text label={ username } transform={ 'lowercase' } max /></Row>
+							<Row><Text label={ 'Token: ' } color={ color } /><Text label={ token } max /></Row>
+						</Col>
+					) }
 				</Col>
-			}
-
+			}</> }
 		</Box>
 	)
 }

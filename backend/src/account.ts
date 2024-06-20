@@ -40,7 +40,7 @@ export async function Login( database, req, res ) {
     
 		const now = new Date( )
 		const expiration = new Date( now.getTime( ) + 60000 * 60 )
-		const token = await jwt.sign( { email, expiration, }, process.env.SECRET_KEY, { expiresIn: '12h' } )
+		const token = await jwt.sign( { email, expiration, }, process.env.SECRET_KEY, { expiresIn: '365d' } )
 
 		res.json( { token } )
   

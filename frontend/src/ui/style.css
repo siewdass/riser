@@ -28,6 +28,13 @@ html, body, #root {
   transition: all 100000s ease-in-out 0s;
 }
 
+.loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
 .loader {
   border: 5px solid #f3f3f3;
   border-radius: 50%;
