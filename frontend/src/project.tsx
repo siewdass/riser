@@ -17,7 +17,7 @@ export function Project() {
 	const [ projects, setProjects ] = useState( [] )
 	const [ reload, setReload ] = useState( 0 )
 
-	const get = async ( ) => {
+	const getProjects = async ( ) => {
 		const response = await Request( 'GET', '/project/read' )
 		if ( response.data.length > 0 ) {
 			setProjects( response.data )
@@ -27,7 +27,7 @@ export function Project() {
 	}
 
 	useEffect( () => {
-		get( )
+		getProjects( )
 	}, []) 
 
 	const [ login, onLogin ] = useForm( {
@@ -45,6 +45,10 @@ export function Project() {
 
 	const submit = async data => {
     const response = await Request( 'POST', '/project/create', data )
+		if ( !response.error ) {
+			getProjects( )
+			setView( 'project' )
+		}
 	}
 
 	return (
