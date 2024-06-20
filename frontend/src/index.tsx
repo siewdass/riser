@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import ReactDOM from "react-dom/client"
 import { createBrowserRouter, RouterProvider, useNavigate } from "react-router-dom"
 import { Project } from './project'
@@ -15,7 +15,7 @@ library.add(...iconList);
 
 function Home( ) {
   const navigate = useNavigate( )
-  navigate( '/user' )
+  useEffect( () => navigate( '/user' ) )
   return <></>
 }
 
