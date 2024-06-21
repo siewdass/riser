@@ -1,7 +1,7 @@
 export { Button } from './button'
 export { Input } from './input'
 export { Text } from './text'
-export { Modal } from './modal'
+export { Dialog } from './dialog'
 export { Box } from './box'
 export { Row } from './row'
 export { Col } from './col'

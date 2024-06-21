@@ -65,7 +65,7 @@ export function Input( props ): ReactElement {
 				onFocus={ e => setFocus( true ) }
 				onBlur={ e => setFocus( false ) }
 				style={ styles.input }
-				autoComplete='new-password'
+				autoComplete='one-time-code'
 			/>
 			<label style={ styles.label } >{ props.name }</label>
 			{ props.form.errors[ props.name ] ? <label style={ styles.error } >{ props.form.errors[ props.name ]?.message }</label> : null}
