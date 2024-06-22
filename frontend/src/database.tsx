@@ -64,7 +64,7 @@ export function Database() {
 				<Text label={ 'Create new table' } size={ 20 }/>
 				{ form.map( ( item, index ) => <Input key={ index } name={ item } form={ create } /> ) }
 				<div style={ { display:'flex', flexGrow: 1 } }></div>
-				<Button label={ 'Create' } onClick={ () => console.log(create) } /> 
+				<Button label={ 'Create' } onClick={ () => console.log(create.getValues()) } /> 
 			</Col> :
 
 			<Col grow padding={ '15px 20px 15px 20px' } gap={ 20 } style={{overflowY: 'scroll'}}>
