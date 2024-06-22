@@ -47,11 +47,10 @@ export function Database() {
 	const form: any = [ 'name' ]
 
 	const createTable = async data => {
-		console.log(data)
-    /*const response = await Request( 'POST', '/database/create', { project, ...data } )
+    const response = await Request( 'POST', '/database/create', { project, ...data } )
 		if ( !response.error ) {
 			getTables( )
-		}*/
+		}
 	}
 
 	return (
