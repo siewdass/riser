@@ -82,7 +82,7 @@ export function Database() {
 						<Row justify={ 'space-between' } style={{ borderBottom: `1px solid ${ dark }`, paddingBottom: 15, marginBottom: 10 }}>
 							<Text label={ data.name } transform={ 'uppercase' } />
 						</Row>
-						{ form.shift( ) && form.map( ( item, index ) => 
+						{ form.map( ( item, index ) => 
 							<Row key={ index }>
 								<Text label={ `${item}: ` } color={ color } />
 								<Text label={ data[ item ] } max />
