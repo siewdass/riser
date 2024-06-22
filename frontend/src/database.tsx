@@ -29,6 +29,7 @@ export function Database() {
 		const response = await Request( 'POST', '/database/read', { project } )
 		if ( response?.data?.length > 0 ) {
 			setDatabase( response.data )
+			setView( 'tables' )
 		} else {
 			setView( 'create' )
 		}
