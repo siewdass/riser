@@ -46,7 +46,7 @@ export async function readDatabase( database, { body }, res ) {
 		const connection = await connect( body.project )
 
 		const data = ( await connection.listCollections( ) ).map( ( { name } ) => name )
-		console.log(data)
+		console.log(await connection.listCollections( ))
 		await connection.close( )
 
 		res.json( { data } )
