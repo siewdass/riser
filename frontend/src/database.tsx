@@ -18,7 +18,7 @@ export function Database() {
 	const [ loading, setLoading ] = useState( true )
 	const [ dialog, setDialog ] = useState( false )
 	const [ database, setDatabase ] = useState( [] )
-	const [ project, setProject ] = useState( params.get('project') )
+	const project = params.get( 'project' )
 
 	const [ create, onCreate ] = useForm( {
 		name: { type: 'text', required: { value: true, message: 'Required' } }
@@ -64,7 +64,7 @@ export function Database() {
 				<Text label={ 'Create new table' } size={ 20 }/>
 				{ form.map( ( item, index ) => <Input key={ index } name={ item } form={ create } /> ) }
 				<div style={ { display:'flex', flexGrow: 1 } }></div>
-				<Button label={ 'Create' } onClick={ () => onCreate( createTable ) } /> 
+				<Button label={ 'Create' } onClick={ onCreate( createTable ) } /> 
 			</Col> :
 
 			<Col grow padding={ '15px 20px 15px 20px' } gap={ 20 } style={{overflowY: 'scroll'}}>
