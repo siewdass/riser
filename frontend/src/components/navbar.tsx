@@ -23,7 +23,7 @@ function Link( { path, icon } ) {
 }
 
 export function Navbar( props ) {
-
+  const navigate = useNavigate( )
   const [ isMobile, setIsMobile ] = useState( window.innerHeight > window.innerWidth )
   const onResize = () => setIsMobile( window.innerHeight > window.innerWidth )
   
@@ -43,7 +43,7 @@ export function Navbar( props ) {
 		<Col background={ color } padding={ '7px 25px 7px 25px' }>
       <Row justify={ 'space-between' } height={ 40 }>
         <Row align={ 'center' }>
-          <Text label={ 'Riser Hub' } padding={ 10 } color={ 'white' } size={ 20 }/>
+          <Text label={ 'Riser Hub' } padding={ 10 } color={ 'white' } size={ 20 } onClick={ () => navigate( '/' )} />
         </Row>
         <Row gap={ 0 }>
           { views.map( ( item, index ) => <Link key={ index } path={ item.path } icon={ item.icon } /> ) }
