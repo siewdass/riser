@@ -38,6 +38,7 @@ export function Database() {
 
 	useEffect( () => {
 		getTables( )
+		console.log(database)
 	}, []) 
 
 
