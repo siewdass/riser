@@ -7,7 +7,7 @@ dotenv.config( )
 import { API } from './api'
 import { Webhook } from './webhook'
 import { createProject, readProjects, updateProjects, deleteProject } from './project'
-import { Database } from './database'
+import { createTable, readDatabase, readTable } from './database'
 import { CDN } from './cdn'
 import { Register, Login, Authorization } from './account'
 
@@ -45,7 +45,9 @@ app.post( '/project/update', ( req: Request, res: Response ) => updateProjects( 
 app.post( '/project/delete', ( req: Request, res: Response ) => deleteProject( database.models, req, res ) )
 
 // DATABASES
-app.post( '/database', ( req: Request, res: Response ) => Database( database.models, req, res ) )
+app.post( '/database/create', ( req: Request, res: Response ) => createTable( database.models, req, res ) )
+app.post( '/database/read', ( req: Request, res: Response ) => readDatabase( database.models, req, res ) )
+app.post( '/database/table', ( req: Request, res: Response ) => readTable( database.models, req, res ) )
 
 // FRONTEND FUNCTIONS
 app.get( '/cdn.js', ( req: Request, res: Response ) => CDN( database.models, req, res ) )

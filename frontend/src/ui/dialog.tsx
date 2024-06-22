@@ -1,6 +1,8 @@
+import { transform } from 'framer-motion'
 import { Theme } from '../services/theme'
 
 export const Dialog = ( props ) => {
+	const { color } = Theme( )
 
 	const styles: any = {
 		background: {
@@ -21,7 +23,7 @@ export const Dialog = ( props ) => {
 			background: 'inherit',
 			zIndex: '50',
 			opacity: props.open ? 1 : 0,
-			transition: 'opacity .1s linear',
+			transition: 'opacity .1s, width 2s, height 2s, linear',
 			width: props.open ? '80%' : 0,
 			height: props.open ? 'auto' : 0,
 			left: '10%',
@@ -33,7 +35,8 @@ export const Dialog = ( props ) => {
 		},
 		title: {
 			fontSize: 20,
-			color: '#71797e'
+			color: color,
+			pointerEvent: 'none'
 		}
 	}
 
@@ -46,4 +49,5 @@ export const Dialog = ( props ) => {
 			</div>
 		</>
 	)
+
 }

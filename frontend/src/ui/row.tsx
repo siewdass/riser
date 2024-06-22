@@ -13,7 +13,9 @@ export function Row( props: any ): ReactElement {
 		gap: props.gap ? props.gap : 10,
 		alignItems: props.align,
 		justifyContent: props.justify,
-		background: props.background
+		background: props.background,
+		borderRadius: props.radius,
+		border: props.border
 	}
 
 	return (

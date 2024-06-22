@@ -17,7 +17,7 @@ export function Project() {
 	const [ projects, setProjects ] = useState( [] )
 	const [ loading, setLoading ] = useState( true )
 	const [ dialog, setDialog ] = useState( false )
-	const [ deleteProject, setDeleteProject ] = useState( '' )
+	const [ selected, setSelected ] = useState< any >( null )
 
 	const getProjects = async ( ) => {
 		setLoading( true )
@@ -56,51 +56,44 @@ export function Project() {
 		
 	}
 
-	const onDelete = async name => {
-    const response = await Request( 'POST', '/project/delete', { name } )
+	const onDelete = async ( ) => {
+    const response = await Request( 'POST', '/project/delete', { name: selected.name } )
 		if ( !response.error ) getProjects()
 		setDialog( false )
 	}
 
-	const form = [ 'name', 'branch', 'repository', 'username', 'token' ]
+	const form: any = [ 'name', 'repository', 'branch', 'username', 'token' ]
 
 	return (
 		<Box>
-			<Navbar
-				router={ 'project' }
-				actions={
-					<Row align={ 'center' }>
-						<FontAwesomeIcon
-							icon={ view == 'create' ? 'table-list' : 'plus' }
-							color={ 'white' }
-							size="xl"
-							style={ {  } }
-							onClick={ () => setView( view == 'create' ? 'projects' : 'create' ) }
-						/>
-					</Row>
-				}
-			/>
+			<Navbar router={ 'project' } />
 
-			{ loading ? <Loader /> : <>{ view === 'create' ? 		
+			{ loading ? <Loader /> : <>{ view === 'create' ?
+
 				<Col gap={ 20 } grow padding={ 20 }>
 					<Text label={ 'Create new project' } size={ 20 }/>
-					{ [ 'name', 'branch', 'repository', 'username', 'token' ].map( ( item, index ) => 
-						<Input key={ index } name={ item } form={ create }/>
-					) }
+					{ form.map( ( item, index ) => <Input key={ index } name={ item } form={ create } /> ) }
 					<div style={ { display:'flex', flexGrow: 1 } }></div>
 					<Button label={ 'Create' } onClick={ onCreate( submit ) } /> 
 				</Col> :
-				<Col grow padding={ 20 } gap={ 20 } style={{overflow: 'scroll'}}>
-					<Text label={ 'Your projects' } size={ 20 }/>
+
+				<Col grow padding={ '15px 20px 15px 20px' } gap={ 20 } style={{overflowY: 'scroll'}}>
+
+					<Row align={ 'center' } justify={ 'space-between' } padding={ '0px 10px 0px 10px' }>
+						<Text label={ 'Project' } size={ 20 }/>
+						<Row gap={ 30 } align={ 'center' }>
+							<FontAwesomeIcon icon={ 'square-plus' } color={ color } size="xl" onClick={ () => setView( 'create' ) }/>
+							<FontAwesomeIcon icon={ 'database' } color={ color } size="lg" onClick={ () => selected ? navigate( `/database?project=${selected.name}` ) : null } />
+							<FontAwesomeIcon icon={ 'trash' } color={ color } size="lg" onClick={ () => selected ? setDialog( true ) : null } />
+						</Row>
+					</Row>
+
 					{ projects?.map( ( data: any, index ) =>
-						<Col key={ index } padding={ 15 } radius={ 10 } border={ `.1px solid ${dark}` }>
-							<Row justify={ 'space-between' } style={{ borderBottom: `.1px solid ${dark}`, paddingBottom: 15, marginBottom: 10 }}>
+						<Col key={ index } padding={ 15 } radius={ 10 } border={ `1px solid ${ data.name === selected?.name ? color : dark }` } onClick={ () => setSelected( data ) }>
+							<Row justify={ 'space-between' } style={{ borderBottom: `1px solid ${ data.name === selected?.name ? color : dark }`, paddingBottom: 15, marginBottom: 10 }}>
 								<Text label={ data.name } transform={ 'uppercase' } />
-								<Row>
-									<FontAwesomeIcon icon={ 'square-minus' } color={ color } size="xl" onClick={ () => { setDeleteProject( data.name ); setDialog( true ) } } />
-								</Row>
 							</Row>
-							{ [ 'branch', 'repository', 'username', 'token' ].map( ( item, index ) => 
+							{ form.shift( ) && form.map( ( item, index ) => 
 								<Row key={ index }>
 									<Text label={ `${item}: ` } color={ color } />
 									<Text label={ data[ item ] } max />
@@ -108,14 +101,17 @@ export function Project() {
 							) }
 						</Col>
 					) }
+
 				</Col>
 			}</> }
+
 			<Dialog open={ dialog } onClose={ setDialog } title={ 'Delete this project?' }>
 				<Row>
-					<Button label={ 'Accept' } onClick={ () => onDelete( deleteProject ) } />
+					<Button label={ 'Accept' } onClick={ () => onDelete( ) } />
 					<Button label={ 'Close' } onClick={ () => setDialog( false ) } />
 				</Row>
 			</Dialog>
+
 		</Box>
 	)
 }

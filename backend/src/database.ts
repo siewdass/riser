@@ -1,38 +1,78 @@
 import { createConnection } from 'mongoose'
 
-/*export class Database {
-	db
-	async connect( url ) {
-		this.db = createConnection( url )
-	}
-	async find( collection ) {
-		await this.db.collection( collection ).find().toArray()
-	}
-}*/
+async function connect( project ) {
+	const connection = createConnection( `mongodb://localhost:27017/${project}?authSource=admin` )
+	await new Promise( ( resolve, reject ) => {
+		connection.once( 'open', resolve )
+		connection.once( 'error', reject )
+	} )
+	return connection
+}
 
-export async function Database( database, { body }, res ) {
+export async function createTable( database, { body }, res ) {
 
 	try {
 
 		const project = await database.Project.findOne( { name: body.project } ) 
 		if ( !project ) throw `project ${ body.project } not exist.` 
 
-		const connection = createConnection( `mongodb://localhost:27017/${body.project}?authSource=admin` )
+		const connection = await connect( body.project )
 
-		await new Promise( ( resolve, reject ) => {
-      connection.once( 'open', resolve )
-      connection.once( 'error', reject )
-    } )
+		const tables = ( await connection.listCollections( ) ).map( ( { name } ) => name )
+		if ( tables.includes( body.table ) ) throw `table ${ body.table } already exist.` 
 
-		let data
+		connection.db.createCollection( body.table )
+
+		connection.close( )
+
+		res.json( { } )
+
+	} catch ( error ) {
+		
+		console.error( error )
+		res.json( { error } )
+
+	}
+
+}
+
+export async function readDatabase( database, { body }, res ) {
+
+	try {
+
+		const project = await database.Project.findOne( { name: body.project } ) 
+		if ( !project ) throw `project ${ body.project } not exist.` 
+
+		const connection = await connect( body.project )
+
+		const data = ( await connection.listCollections( ) ).map( ( { name } ) => name )
+
+		connection.close( )
+
+		res.json( { data } )
+
+	} catch ( error ) {
+		
+		console.error( error )
+		res.json( { error } )
+
+	}
+
+}
+
+export async function readTable( database, { body }, res ) {
+
+	try {
+
+		const project = await database.Project.findOne( { name: body.project } ) 
+		if ( !project ) throw `project ${ body.project } not exist.` 
+
+		const connection = await connect( body.project )
+
 		const tables = ( await connection.listCollections( ) ).map( ( { name } ) => name )
 
-		if ( body.database ) {
-			data = tables
-		} else {
-			if ( !tables.includes( body.table ) ) throw `table ${ body.table } not exist.` 
-			data = await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
-		}
+		if ( !tables.includes( body.table ) ) throw `table ${ body.table } not exist.` 
+		const data = await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
 
 		connection.close( )
 
