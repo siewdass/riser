@@ -18,6 +18,7 @@ export function Database() {
 	const [ loading, setLoading ] = useState( true )
 	const [ dialog, setDialog ] = useState( false )
 	const [ database, setDatabase ] = useState( [] )
+	const [ project, setProject ] = useState( params.get('project') )
 
 	const [ create, onCreate ] = useForm( {
 		name: { type: 'text', required: { value: true, message: 'Required' } }
@@ -25,9 +26,7 @@ export function Database() {
 
 	const getTables = async ( ) => {
 		setLoading( true )
-		const response = await Request( 'POST', '/database/read', { project: params.get('project') } )
-		console.log(response.data)
-
+		const response = await Request( 'POST', '/database/read', { project } )
 		if ( response?.data?.length > 0 ) {
 			setDatabase( response.data )
 		} else {
@@ -49,12 +48,10 @@ export function Database() {
 
 	const createTable = async data => {
 		console.log(data)
-    /*const response = await Request( 'POST', '/database/create', { } )
+    const response = await Request( 'POST', '/database/create', { project, ...data } )
 		if ( !response.error ) {
-			//getTables( )
-			setView( 'tables' )
-		}*/
-		
+			getTables( )
+		}
 	}
 
 	return (
