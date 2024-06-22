@@ -21,9 +21,9 @@ export async function createTable( database, { body }, res ) {
 		const tables = ( await connection.listCollections( ) ).map( ( { name } ) => name )
 		if ( tables.includes( body.table ) ) throw `table ${ body.table } already exist.` 
 
-		connection.db.createCollection( body.table )
+		await connection.db.createCollection( body.table )
 
-		connection.close( )
+		await connection.close( )
 
 		res.json( { } )
 
@@ -47,7 +47,7 @@ export async function readDatabase( database, { body }, res ) {
 
 		const data = ( await connection.listCollections( ) ).map( ( { name } ) => name )
 
-		connection.close( )
+		await connection.close( )
 
 		res.json( { data } )
 
@@ -74,7 +74,7 @@ export async function readTable( database, { body }, res ) {
 		if ( !tables.includes( body.table ) ) throw `table ${ body.table } not exist.` 
 		const data = await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
 
-		connection.close( )
+		await connection.close( )
 
 		res.json( { data } )
 
