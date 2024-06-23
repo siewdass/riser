@@ -5,7 +5,7 @@ const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: path.resolve(__dirname, './src/index.js'),
+  entry: path.resolve(__dirname, './index.js'),
   module: {
     rules: [
       {
