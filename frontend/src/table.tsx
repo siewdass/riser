@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Row, Col, Table, Button, Text, Grow, Dialog } from './ui'
+import { Box, Row, Col, Table as T, Button, Text, Grow, Dialog } from './ui'
 import { Request } from './services/request'
 import { Input } from './ui/input'
 import { useForm } from './library/form'
@@ -9,27 +9,28 @@ import { Theme } from './services/theme'
 
 import { Navbar, Loader, Header } from './components'
 
-export function Database() {
+export function Table() {
 	const [ params ] = useSearchParams( )
 	const navigate = useNavigate( )
 	const { color, light, dark } = Theme()
 	const [ view, setView ] = useState( 'create' )
 	const [ loading, setLoading ] = useState( true )
 	const [ dialog, setDialog ] = useState( false )
-	const [ selected, setSelected ] = useState< any >( null )
-	const [ database, setDatabase ] = useState( [] )
+	const [ selected, setSelected ] = useState< any >( {} )
+	const [ collection, setCollection ] = useState( [] )
 	const project = params.get( 'project' )
+	const table = params.get( 'table' )
 
 	const [ create, onCreate ] = useForm( {
 		name: { type: 'text', required: { value: true, message: 'Required' } }
 	} )
 
-	const getTables = async ( ) => {
+	const getTable = async ( ) => {
 		setLoading( true )
-		const response = await Request( 'POST', '/table/read', { id: project } )
+		const response = await Request( 'POST', '/table/data', { project, table } )
 		if ( response?.data?.length > 0 ) {
-			setDatabase( response.data )
-			setView( 'tables' )
+			setCollection( response.data )
+			setView( 'table' )
 		} else {
 			setView( 'create' )
 		}
@@ -38,7 +39,7 @@ export function Database() {
 
 	useEffect( () => {
 		if ( localStorage.getItem( 'token' ) === null ) navigate( '/user' )
-		getTables( )
+		getTable( )
 	}, []) 
 
 	const form: any = [ 'name' ]
@@ -47,7 +48,7 @@ export function Database() {
 		left: [
 			{ icon: 'angle-left', color, size: 'xl', onClick: () => {
 				if ( view === 'create' ) {
-					if ( database?.length === 0 ) navigate( '/project' )
+					if ( collection?.length === 0 ) navigate( '/project' )
 					else setView( 'database' )
 				} else {
 					navigate( '/project' )
@@ -55,20 +56,8 @@ export function Database() {
 			} }
 		],
 		right: [
-			{ icon: 'square-plus', color: color, size: 'xl', onClick: () => setView( 'create' ) },
-			{ icon: 'table', color: selected?.indexes > 0 ? color : dark, size: 'lg', onClick: () => selected ? navigate( `/table?project=${ project }&table=${ selected?.table }` ) : null },
 			{ icon: 'trash', color: color, size: 'lg', onClick: () => setDialog( true ) }
 		] 
-	}
-
-	const createTable = async data => {
-    const response = await Request( 'POST', '/table/create', { id: project, table: data.name } )
-		if ( !response?.error ) getTables( )
-	}
-	
-	const deleteTable = async ( ) => {
-    const response = await Request( 'POST', '/table/delete', { id: project, table: selected?.table } )
-		if ( !response?.error ) getTables( )
 	}
 
 	return (
@@ -78,7 +67,7 @@ export function Database() {
 			{ loading ? <Loader /> : 
 				<Col grow padding={ 15 } gap={ 20 } style={ view !== 'create' ? { overflowY: 'scroll' } : null }>
 					<Header
-						label={ view === 'create' ? 'Create new table' : 'Database' }
+						label={ view === 'create' ? 'Create new index' : 'Table' }
 						left={ header.left }
 						right={ view !== 'create' ? header.right : null }
 					/>
@@ -86,30 +75,12 @@ export function Database() {
 						<>
 							{ form.map( ( item, index ) => <Input key={ index } name={ item } form={ create } /> ) }
 							<Grow />
-							<Button label={ 'Create' } onClick={ onCreate( createTable ) } /> 
+							<Button label={ 'Create' } onClick={ () => {} } /> 
 						</> :
-						<>
-							{ database?.map( ( data: any, index ) =>
-								<Col key={ index } padding={ 15 } radius={ 10 } border={ `1px solid ${ data.table === selected?.table ? color : dark }` } onClick={ () => setSelected( data ) }>
-									{ Object.keys( data ).map( ( item, index ) => 
-										<Row key={ index }>
-											<Text label={ `${item}: ` } color={ color } />
-											<Text label={ data[ item ] } max />
-										</Row>
-									) }
-								</Col>
-							) }
-						</>
+						<T data={ collection } />
 					} 
 				</Col> 
 			}
-
-			<Dialog
-				open={ dialog }
-				title={ `Delete table ${ selected?.table }?` }
-				onAccept={ deleteTable }
-				onClose={ setDialog }
-			/>
 
 		</Box>
 	)

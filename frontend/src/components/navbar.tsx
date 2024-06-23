@@ -40,7 +40,7 @@ export function Navbar( props ) {
   ]
 
 	return (
-		<Col background={ color } padding={ '7px 25px 7px 25px' }>
+		<Col background={ color } padding={ '7px 15px 7px 15px' }>
       <Row justify={ 'space-between' } height={ 40 }>
         <Row align={ 'center' }>
           <Text label={ 'Riser Hub' } padding={ 10 } color={ 'white' } size={ 20 } onClick={ () => navigate( '/' )} />

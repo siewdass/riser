@@ -1,5 +1,6 @@
 import { transform } from 'framer-motion'
 import { Theme } from '../services/theme'
+import { Row, Button } from './'
 
 export const Dialog = ( props ) => {
 	const { color } = Theme( )
@@ -42,10 +43,13 @@ export const Dialog = ( props ) => {
 
 	return (
 		<>
-			<div style={ styles.background } onClick={ ( ) => setTimeout( () => {props?.onClose( false )}, 100 ) }></div>
+			<div style={ styles.background } onClick={ ( ) => setTimeout( () => { props?.onClose( false ) }, 100 ) }></div>
 			<div style={ styles.window }>
 				<div style={ styles.title }>{ props.title }</div>
-				<div>{ props.children }</div>
+				<Row>
+					<Button label={ 'Accept' } onClick={ () => { props?.onAccept( ); props?.onClose( false ) } } />
+					<Button label={ 'Close' } onClick={ () => setTimeout( () => { props?.onClose( false ) }, 100 ) } />
+				</Row>
 			</div>
 		</>
 	)

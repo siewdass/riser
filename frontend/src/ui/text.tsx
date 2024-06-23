@@ -4,7 +4,7 @@ import { Theme } from '../services/theme'
 export function Text( props ) {
 	const { light, medium, dark, radius, color } = Theme()
 
-	let style: CSSProperties = {
+	const style: CSSProperties = {
 		textAlign: props.max ? 'left' : 'center',
 		fontSize: props.size ? props.size : '1rem',
 		color: props.color ? props.color : dark,
@@ -19,7 +19,8 @@ export function Text( props ) {
 		overflow: props.max ? 'hidden' : '',
 		textOverflow: props.max ? 'ellipsis' : '',
 		justifyContent: props.center ? 'center' : '',
-		margin: 0
+		margin: 0,
+		padding: props.padding | 0
 	}
 
 	return <p style={ { ...style, ...props.style } } onClick={ props.onClick }>{ props.label } </p>

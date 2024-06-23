@@ -11,9 +11,10 @@ export async function Request( method: string, endpoint: string, data: any = {} 
 			... method !== 'GET' ? { body: JSON.stringify( data ) } : null
 		} )
 		const res = await response.json( )
-		console.log( method, endpoint, res )
+		console.log( method, endpoint, data, res.data )
 		return res
 	} catch ( err ) {
-		return err
+		console.error( method, endpoint, data, err )
+		return null
 	}
 }

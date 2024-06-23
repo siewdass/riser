@@ -7,9 +7,10 @@ import { load } from 'js-yaml'
 export async function Webhook( database, { query, body }, res ) {
 
 	try {
-		const project = await database.Project.findOne( { name: query.project } )
+		const project = await database.Project.findOne( { id: query.project } )
+		if ( !project ) throw `project ${ query.project } not exist.` 
 
-		if ( !project && !body.ref.endsWith( project.branch ) ) throw 'Not the select branch.'
+		if ( !body.ref.endsWith( project.branch ) ) throw `branch ${ project.branch } not exist.` 
 		
 		const fs = createFsFromVolume( new Volume() )
 		

@@ -1,4 +1,4 @@
-export const isTouch = () => {
+export function isTouch() {
 	try {
 		document.createEvent( 'TouchEvent' )
 		return true

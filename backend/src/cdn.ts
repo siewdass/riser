@@ -4,7 +4,7 @@ export async function CDN( database, req, res ) {
 
 	try {
 
-		const project = await database.Project.findOne( { name: req.query.project } )
+		const project = await database.Project.findOne( { id: req.query.project } )
 		if ( !project ) throw `project ${ req.query.project } not exist.` 
 
 		const { code } = await database.Function.findOne(

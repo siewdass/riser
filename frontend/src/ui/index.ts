@@ -9,5 +9,7 @@ export { Animate } from './animate'
 export { Action } from './action'
 export { Touchable } from './touchable'
 export { Table } from './table'
+export { Accordion } from './accordion'
+export { Grow } from './grow'
 
 import './style.css'

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Row, Col, Table, Button, Text, Dialog } from './ui'
+import React, { useEffect, useState, useMemo } from 'react'
+import { Box, Row, Col, Table, Button, Text, Dialog, Accordion, Grow } from './ui'
 import { Request } from './services/request'
 import { Input } from './ui/input'
 import { useForm } from './library/form'
@@ -7,8 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Theme } from './services/theme'
 
-import { Navbar } from './components/navbar'
-import { Loader } from './components/loader'
+import { Navbar, Loader, Header } from './components'
 
 export function Project() {
 	const navigate = useNavigate( )
@@ -47,70 +46,93 @@ export function Project() {
 		if ( localStorage.getItem( 'token' ) === null ) navigate( '/user' )
  	}, [])
 
-	const submit = async data => {
+	const createProject = async data => {
     const response = await Request( 'POST', '/project/create', data )
 		if ( !response.error ) {
 			getProjects( )
 			setView( 'project' )
 		}
-		
 	}
 
-	const onDelete = async ( ) => {
+	const deleteProject = async ( ) => {
     const response = await Request( 'POST', '/project/delete', { name: selected.name } )
 		if ( !response.error ) getProjects()
-		setDialog( false )
 	}
 
-	const form: any = [ 'name', 'repository', 'branch', 'username', 'token' ]
+	const form: any = [ 'repository', 'branch', 'username', 'token' ]
+
+	const header = useMemo( () => ( {
+		left: [
+			{ icon: 'angle-left', color, size: 'xl', onClick: () => {
+				if ( view === 'create' ) {
+					if ( projects?.length === 0 ) navigate( '/' )
+					else setView( 'projects' )
+				} else {
+					navigate( '/' )
+				}
+			} }
+		],
+		right: [
+			{ icon: 'square-plus', color: color, size: 'xl', onClick: () => setView( 'create' ) },
+			{ icon: 'trash', color: selected ? color : dark, size: 'lg', onClick: () => selected ? setDialog( true ) : null }
+		]
+	} ), [ view, selected, color ] )
+
+	const actions =  [
+		{ icon: 'database', onClick: () => selected ? navigate( `/database?project=${selected.id}` ) : null },
+		{ icon: 'cloud-arrow-up', onClick: () => {} },
+		{ icon: 'window-maximize',  onClick: () => {} },
+		{ icon: 'chart-pie',  onClick: () => {} },
+		{ icon: ['fab', 'github'],  onClick: () => {} },
+	]
 
 	return (
 		<Box>
 			<Navbar router={ 'project' } />
 
-			{ loading ? <Loader /> : <>{ view === 'create' ?
-
-				<Col gap={ 20 } grow padding={ 20 }>
-					<Text label={ 'Create new project' } size={ 20 }/>
-					{ form.map( ( item, index ) => <Input key={ index } name={ item } form={ create } /> ) }
-					<div style={ { display:'flex', flexGrow: 1 } }></div>
-					<Button label={ 'Create' } onClick={ onCreate( submit ) } /> 
-				</Col> :
-
-				<Col grow padding={ '15px 20px 15px 20px' } gap={ 20 } style={{overflowY: 'scroll'}}>
-
-					<Row align={ 'center' } justify={ 'space-between' } padding={ '0px 10px 0px 10px' }>
-						<Text label={ 'Project' } size={ 20 }/>
-						<Row gap={ 30 } align={ 'center' }>
-							<FontAwesomeIcon icon={ 'square-plus' } color={ color } size="xl" onClick={ () => setView( 'create' ) }/>
-							<FontAwesomeIcon icon={ 'database' } color={ color } size="lg" onClick={ () => selected ? navigate( `/database?project=${selected.name}` ) : null } />
-							<FontAwesomeIcon icon={ 'trash' } color={ color } size="lg" onClick={ () => selected ? setDialog( true ) : null } />
-						</Row>
-					</Row>
-
-					{ projects?.map( ( data: any, index ) =>
-						<Col key={ index } padding={ 15 } radius={ 10 } border={ `1px solid ${ data.name === selected?.name ? color : dark }` } onClick={ () => setSelected( data ) }>
-							<Row justify={ 'space-between' } style={{ borderBottom: `1px solid ${ data.name === selected?.name ? color : dark }`, paddingBottom: 15, marginBottom: 10 }}>
-								<Text label={ data.name } transform={ 'uppercase' } />
-							</Row>
-							{ form.shift( ) && form.map( ( item, index ) => 
-								<Row key={ index }>
-									<Text label={ `${item}: ` } color={ color } />
-									<Text label={ data[ item ] } max />
-								</Row>
+			{ loading ? <Loader /> : 
+				<Col grow padding={ 15 } gap={ 20 } style={ view !== 'create' ? { overflowY: 'scroll' } : null }>
+					<Header
+						label={ view === 'create' ? 'Create new project' : 'Project' }
+						left={ header.left }
+						right={ view !== 'create' ? header.right : null }
+					/>
+					{ view === 'create' ?
+						<>
+							{ [ 'name', ...form ].map( ( item, index ) => <Input key={ index } name={ item } form={ create } /> ) }
+							<Grow />
+							<Button label={ 'Create' } onClick={ onCreate( createProject ) } /> 
+						</> :
+						<>
+							{ projects?.map( ( data: any, index ) =>
+								<Col key={ index } padding={ '15px 20px 15px 20px' } radius={ 10 } border={ `1px solid ${ data.name === selected?.name ? color : dark }` } onClick={ () => setSelected( data ) }>
+									<Row justify={ 'space-between' } style={{ borderBottom: `1px solid ${ data.name === selected?.name ? color : dark }`, paddingBottom: 15, marginBottom: 10 }}>
+										<Text label={ data.name } transform={ 'uppercase' } />
+										<Row align={ 'center' } gap={ 20 } style={ { display: data.name === selected?.name ? 'flex' : 'none', opacity: data.name === selected?.name ? 1 : 0, transition: 'opacity .1s linear' } }>
+											{ ( actions as any ).map( ( item, index ) => 
+												<FontAwesomeIcon key={ index } icon={ item.icon } color={ color } size={ 'lg' } onClick={ item.onClick } />
+											) }
+										</Row>
+									</Row>
+									{ form.map( ( item, index ) => 
+										<Row key={ index }>
+											<Text label={ `${item}: ` } color={ color } />
+											<Text label={ data[ item ] } max />
+										</Row>
+									) }
+								</Col>
 							) }
-						</Col>
-					) }
+						</>
+					} 
+				</Col> 
+			}
 
-				</Col>
-			}</> }
-
-			<Dialog open={ dialog } onClose={ setDialog } title={ 'Delete this project?' }>
-				<Row>
-					<Button label={ 'Accept' } onClick={ () => onDelete( ) } />
-					<Button label={ 'Close' } onClick={ () => setDialog( false ) } />
-				</Row>
-			</Dialog>
+			<Dialog
+				open={ dialog }
+				title={ `Delete project ${ selected?.name }?` }
+				onAccept={ deleteProject } 
+				onClose={ setDialog } 
+			/>
 
 		</Box>
 	)

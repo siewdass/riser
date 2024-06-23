@@ -7,12 +7,12 @@ dotenv.config( )
 import { API } from './api'
 import { Webhook } from './webhook'
 import { createProject, readProjects, updateProjects, deleteProject } from './project'
-import { createTable, readDatabase, readTable } from './database'
+import { createTable, readTables, readTable, deleteTable } from './database'
 import { CDN } from './cdn'
 import { Register, Login, Authorization } from './account'
 
 const database = createConnection( `${process.env.MONGO_URI}` )
-database.model( 'Project', new Schema( { name: String, email: String, repository: String, branch: String, private: Boolean, username: String, token: String } ) )
+database.model( 'Project', new Schema( { id: String, name: String, email: String, repository: String, branch: String, private: Boolean, username: String, token: String } ) )
 database.model( 'Function', new Schema( { name: String, path: String, code: String, packages: Array, type: String } ) )
 database.model( 'Account', new Schema( { id: String, email: String, password: String } ) )
 
@@ -44,10 +44,11 @@ app.get( '/project/read', ( req: Request, res: Response ) => readProjects( datab
 app.post( '/project/update', ( req: Request, res: Response ) => updateProjects( database.models, req, res ) )
 app.post( '/project/delete', ( req: Request, res: Response ) => deleteProject( database.models, req, res ) )
 
-// DATABASES
-app.post( '/database/create', ( req: Request, res: Response ) => createTable( database.models, req, res ) )
-app.post( '/database/read', ( req: Request, res: Response ) => readDatabase( database.models, req, res ) )
-app.post( '/database/table', ( req: Request, res: Response ) => readTable( database.models, req, res ) )
+// TABLES
+app.post( '/table/create', ( req: Request, res: Response ) => createTable( database.models, req, res ) )
+app.post( '/table/read', ( req: Request, res: Response ) => readTables( database.models, req, res ) )
+app.post( '/table/data', ( req: Request, res: Response ) => readTable( database.models, req, res ) )
+app.post( '/table/delete', ( req: Request, res: Response ) => deleteTable( database.models, req, res ) )
 
 // FRONTEND FUNCTIONS
 app.get( '/cdn.js', ( req: Request, res: Response ) => CDN( database.models, req, res ) )

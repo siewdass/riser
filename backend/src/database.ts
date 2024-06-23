@@ -9,19 +9,19 @@ async function connect( project ) {
 	return connection
 }
 
-export async function createTable( database, { body }, res ) {
+export async function createTable( database, req, res ) {
 
 	try {
 
-		const project = await database.Project.findOne( { name: body.project } ) 
-		if ( !project ) throw `project ${ body.project } not exist.` 
+		const project = await database.Project.findOne( { id: req.body.id } ) 
+		if ( !project ) throw `project ${ req.body.id } not exist.` 
 
-		const connection = await connect( body.project )
+		const connection = await connect( req.body.id )
 
 		const tables = ( await connection.listCollections( ) ).map( ( { name } ) => name )
-		if ( tables.includes( body.table ) ) throw `table ${ body.table } already exist.` 
+		if ( tables.includes( req.body.table ) ) throw `table ${ req.body.table } already exist.` 
 
-		await connection.db.createCollection( body.table )
+		await connection.db.createCollection( req.body.table )
 
 		await connection.close( )
 
@@ -36,17 +36,24 @@ export async function createTable( database, { body }, res ) {
 
 }
 
-export async function readDatabase( database, { body }, res ) {
+export async function readTables( database, req, res ) {
 
 	try {
 
-		const project = await database.Project.findOne( { name: body.project } ) 
-		if ( !project ) throw `project ${ body.project } not exist.` 
+		const project = await database.Project.findOne( { id: req.body.id } ) 
+		if ( !project ) throw `project ${ req.body.id } not exist.` 
 
-		const connection = await connect( body.project )
+		const connection = await connect( req.body.id )
+		const collection = await connection.listCollections( )
 
-		const data = ( await connection.listCollections( ) ).map( ( { name } ) => name )
-		console.log(await connection.listCollections( ))
+		const data = await Promise.all(
+			collection.map( async ( { name } ) => {
+				const index = await connection.collection( name ).findOne( )
+				const documents = await connection.collection( name ).countDocuments( )
+				return { table: name, fields: index ? Object.keys( index ).length : 0, indexes: documents }
+			} )
+		)
+
 		await connection.close( )
 
 		res.json( { data } )
@@ -64,7 +71,7 @@ export async function readTable( database, { body }, res ) {
 
 	try {
 
-		const project = await database.Project.findOne( { name: body.project } ) 
+		const project = await database.Project.findOne( { id: body.project } ) 
 		if ( !project ) throw `project ${ body.project } not exist.` 
 
 		const connection = await connect( body.project )
@@ -77,6 +84,34 @@ export async function readTable( database, { body }, res ) {
 		await connection.close( )
 
 		res.json( { data } )
+
+	} catch ( error ) {
+		
+		console.error( error )
+		res.json( { error } )
+
+	}
+
+}
+
+export async function deleteTable( database, { body }, res ) {
+
+	try {
+
+		const project = await database.Project.findOne( { id: body.project } ) 
+		if ( !project ) throw `project ${ body.project } not exist.` 
+
+		const connection = await connect( body.id )
+
+		const tables = ( await connection.listCollections( ) ).map( ( { name } ) => name )
+
+		if ( !tables.includes( body.table ) ) throw `table ${ body.table } not exist.` 
+
+		await connection.db.dropCollection( body.table )
+
+		await connection.close( )
+
+		res.json( { } )
 
 	} catch ( error ) {
 		
