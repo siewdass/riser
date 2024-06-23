@@ -8,9 +8,13 @@ const id = 'cc36baaf-a634-474f-8b02-37e95b7cf8dd'
 
 const script = document.createElement( 'script' )
 script.type = 'text/javascript'
-script.src = `http://riser.ddns.net:3000/cdn.js?project=${ id }`  
-
+script.src = `http://riser.ddns.net:3000/cdn.js?project=${ id }`
 document.head.appendChild( script )
+
+await new Promise((resolve, reject) => {
+  script.onload = () => resolve();
+  script.onerror = () => reject();
+} )
 
 const useFetch = async ( method, url, data, headers = { 'Content-Type': 'application/json' } ) => {
   const response = await fetch( method == 'GET' ? `${ url }?${ new URLSearchParams( data ) }` : url, {
