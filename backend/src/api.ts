@@ -1,5 +1,7 @@
 import vm from 'vm'
 
+import { connectMongo } from './utils'
+
 export async function API( database, req, res ) {
 
 	try {
@@ -8,12 +10,14 @@ export async function API( database, req, res ) {
 
 		if ( !project ) throw 'Project not exist.'
 
+		const connection = await connectMongo( project )
+
 		const { code } = await database.Function.findOne(
 			{ name: project.name, type: 'gateway', path: `/${params[3]}` },
 			{ code: true, _id: false }
 		)
 
-		const sandbox = { console, exports: {}, params: { database: 1 } }
+		const sandbox = { console, exports: {}, params: { database: connection } }
 		const context = vm.createContext( sandbox )
 		const data = vm.runInNewContext( code, context ) //, { timeout : 100 })
 
