@@ -4,7 +4,7 @@ export async function API( database, req, res ) {
 
 	try {
 		const params = req.path.split( '/' )
-		const project = await database.Project.findOne( { name: params[ 2 ] } )
+		const project = await database.Project.findOne( { id: params[ 2 ] } )
 
 		if ( !project ) throw 'Project not exist.'
 
