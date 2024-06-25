@@ -86,6 +86,8 @@ export function Project() {
 		{ icon: ['fab', 'github'],  onClick: () => {} },
 	]
 
+	const download = `<!DOCTYPE html><html><head><script>const id = 'ID'</script></head><body><div id="root"></div><script src="http://localhost:3000/runtime.js"></script></body></html>`
+	//.replace("ID", selected?.id )
 	return (
 		<Box>
 			<Navbar router={ 'project' } />

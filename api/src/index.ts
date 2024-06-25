@@ -1,6 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express'
 import { createConnection, Schema } from 'mongoose'
 import dotenv from 'dotenv'
+import path from 'path'
 
 dotenv.config( )
 
@@ -19,6 +20,7 @@ database.model( 'Account', new Schema( { id: String, email: String, password: St
 const app: Express = express()
 
 app.use( express.json( ) )
+app.use( '/' , express.static( path.join( __dirname, '..', 'runtime' ) ) )
 
 app.use( ( req: Request, res: Response, next: NextFunction ) => {
 	res.setHeader( 'Access-Control-Allow-Origin', '*' )
@@ -27,8 +29,8 @@ app.use( ( req: Request, res: Response, next: NextFunction ) => {
 	res.setHeader( 'Access-Control-Allow-Credentials', true )
 	next( )
 } )
-
-app.get( '/', ( req: Request, res: Response ) => res.send( 'Riser Hub' ) )
+console.log( __dirname )
+//app.get( '/', ( req: Request, res: Response ) => res.send( 'Riser Hub' ) )
 
 // ACCOUNT
 app.post( '/account/register', ( req: Request, res: Response ) => Register( database.models, req, res ) )
