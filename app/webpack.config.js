@@ -50,6 +50,11 @@ module.exports = {
   stats: {
     modules: false,
   },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
+  },
   devServer: process.env.NODE_ENV == 'development' ? {
     host: '0.0.0.0',
     port: 80,
