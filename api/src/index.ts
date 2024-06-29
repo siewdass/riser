@@ -2,6 +2,8 @@ import express, { Express, Request, Response, NextFunction } from 'express'
 import { createConnection, Schema } from 'mongoose'
 import dotenv from 'dotenv'
 import path from 'path'
+import fs from 'fs'
+import { createServer } from 'https'
 
 dotenv.config( )
 
@@ -29,7 +31,7 @@ app.use( ( req: Request, res: Response, next: NextFunction ) => {
 	res.setHeader( 'Access-Control-Allow-Credentials', true )
 	next( )
 } )
-console.log( __dirname )
+
 //app.get( '/', ( req: Request, res: Response ) => res.send( 'Riser Hub' ) )
 
 // ACCOUNT
@@ -58,4 +60,9 @@ app.get( '/cdn.js', ( req: Request, res: Response ) => CDN( database.models, req
 // BACKEND FUNCTIONS
 app.post( '/api/*', ( req: Request, res: Response ) => API( database.models, req, res ) )
 
-app.listen( process.env.PORT )
+if ( process.env.NODE_ENV == 'development' ) {
+	app.listen( process.env.PORT )
+} else {
+	const options = { key: fs.readFileSync( __dirname + '/../../woveer.key' ), cert: fs.readFileSync( __dirname + '/../../woveer.crt' ) }
+	createServer( options, Express ).listen( process.env.PORT )
+}

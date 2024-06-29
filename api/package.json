@@ -4,7 +4,8 @@
   "main": "src/index.ts",
   "private": true,
   "scripts": {
-    "dev": "npx webpack --watch"
+    "dev": "npx webpack --watch --mode development",
+    "serve": "npx webpack --watch --mode production"
   },
   "devDependencies": {
     "nodemon-webpack-plugin": "4.5.2",
