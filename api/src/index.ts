@@ -63,6 +63,6 @@ app.post( '/api/*', ( req: Request, res: Response ) => API( database.models, req
 if ( process.env.NODE_ENV == 'development' ) {
 	app.listen( process.env.PORT )
 } else {
-	const options = { key: fs.readFileSync( __dirname + '/../../woveer.key' ), cert: fs.readFileSync( __dirname + '/../../woveer.crt' ) }
+	const options = { key: fs.readFileSync( __dirname + '/../../riser.key' ), cert: fs.readFileSync( __dirname + '/../../riser.crt' ) }
 	createServer( options, Express ).listen( process.env.PORT )
 }
