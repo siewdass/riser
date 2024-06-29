@@ -21,7 +21,8 @@ export const Button = ( props ) => {
 		alignItems: 'center',
 		justifyContent: 'center',
 		background: hover ? color : 'inherit',
-		textTransform: 'capitalize'
+		textTransform: 'capitalize',
+		userSelect: 'none'
 	}
 
 	return (
