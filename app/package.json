@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx webpack serve --progress --mode development",
     "serve": "npx webpack serve --progress --mode production",
-    "deploy": "pm2 start npm --name 'app name' -- serve"
+    "deploy": "pm2 start yarn --name frontend -- serve"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
