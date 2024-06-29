@@ -49,11 +49,23 @@ module.exports = {
   stats: {
     modules: false,
   },
-  devServer: {
+  devServer: process.env.NODE_ENV == 'development' ? {
     host: '0.0.0.0',
-    port: 3001,
+    port: 80,
     server: 'http',
     historyApiFallback: true,
     allowedHosts: 'all',
+  } : {
+    host: '0.0.0.0',
+    port: 443,
+    historyApiFallback: true,
+    allowedHosts: 'all',
+    server: {
+      type: 'https',
+      options: {
+        key: fs.readFileSync( '../riser.key' ),
+        cert: fs.readFileSync( '../riser.crt' )
+      }
+    }
   }
 }

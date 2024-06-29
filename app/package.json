@@ -5,7 +5,7 @@
   "main": "src/index.tsx",
   "scripts": {
     "dev": "npx webpack serve --progress --mode development",
-    "serve": "npx webpack serve --progress --mode development"
+    "serve": "npx webpack serve --progress --mode production"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
