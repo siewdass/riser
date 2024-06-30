@@ -22,7 +22,7 @@ database.model( 'Account', new Schema( { id: String, email: String, password: St
 const app: Express = express()
 
 app.use( express.json( ) )
-//app.use( '/' , express.static( path.join( __dirname, '..', 'runtime' ) ) )
+app.use( '/' , express.static( path.join( __dirname, '..', 'runtime' ) ) )
 
 app.use( ( req: Request, res: Response, next: NextFunction ) => {
 	res.setHeader( 'Access-Control-Allow-Origin', '*' )
