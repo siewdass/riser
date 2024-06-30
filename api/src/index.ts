@@ -32,7 +32,7 @@ app.use( ( req: Request, res: Response, next: NextFunction ) => {
 	next( )
 } )
 
-app.get( '/', ( req: Request, res: Response ) => res.send( 'Riser Hub' ) )
+//app.get( '/', ( req: Request, res: Response ) => res.send( 'Riser Hub' ) )
 
 // ACCOUNT
 app.post( '/account/register', ( req: Request, res: Response ) => Register( database.models, req, res ) )
