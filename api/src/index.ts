@@ -1,4 +1,22 @@
-import express, { Express, Request, Response, NextFunction } from 'express'
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+
+var credentials = {key: privateKey, cert: certificate};
+var express = require('express');
+var app = express();
+
+app.get( '/', ( req, res ) => res.send( 'Riser Hub' ) )
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(8080);
+httpsServer.listen(8443);
+
+/*import express, { Express, Request, Response, NextFunction } from 'express'
 import { createConnection, Schema } from 'mongoose'
 import dotenv from 'dotenv'
 import path from 'path'
@@ -65,4 +83,4 @@ if ( process.env.NODE_ENV == 'development' ) {
 } else {
 	const options = { key: fs.readFileSync( __dirname + '/../../riser.key' ), cert: fs.readFileSync( __dirname + '/../../riser.crt' ) }
 	createServer( options, Express ).listen( process.env.PORT )
-}
+}*/
