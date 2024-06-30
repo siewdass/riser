@@ -1,23 +1,4 @@
-var fs = require('fs');
-var http = require('http');
-var https = require('https');
-
-var credentials = {
-	key: fs.readFileSync( __dirname + '/../../riser.key', 'utf8' ),
-	cert: fs.readFileSync( __dirname + '/../../riser.crt', 'utf8' )
-}
-var express = require('express');
-var app = express();
-
-app.get( '/', ( req, res ) => res.send( 'Riser Hub' ) )
-
-var httpServer = http.createServer(app);
-var httpsServer = https.createServer(credentials, app);
-
-httpServer.listen(8080);
-httpsServer.listen(8443);
-
-/*import express, { Express, Request, Response, NextFunction } from 'express'
+import express, { Express, Request, Response, NextFunction } from 'express'
 import { createConnection, Schema } from 'mongoose'
 import dotenv from 'dotenv'
 import path from 'path'
@@ -82,6 +63,8 @@ app.post( '/api/*', ( req: Request, res: Response ) => API( database.models, req
 if ( process.env.NODE_ENV == 'development' ) {
 	app.listen( process.env.PORT )
 } else {
-	const options = { key: fs.readFileSync( __dirname + '/../../riser.key' ), cert: fs.readFileSync( __dirname + '/../../riser.crt' ) }
-	createServer( options, Express ).listen( process.env.PORT )
-}*/
+	createServer( {
+		key: fs.readFileSync( __dirname + '/../../riser.key', 'utf8' ),
+		cert: fs.readFileSync( __dirname + '/../../riser.crt', 'utf8' )
+	}, app ).listen( process.env.PORT )
+}
