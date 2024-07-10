@@ -63,12 +63,6 @@ export class Database {
 
 }
 
-function fix( x ) {
-  let v = ''
-  if ( x ) v = `-${JSON.stringify(x)}`
-  return
-}
-
 export class DB {
   private conection: MqttClient
   private project: string = 'project'
@@ -94,7 +88,7 @@ export class DB {
   }
 
   read( { table, index, state, page, sort }: any ) {
-    const path = `/read/${ this.project }/${ table }${ index ? `-${JSON.stringify(index)}` : '' }`
+    const path = `/read/${ this.project }/${ table }${ index ? `-${ JSON.stringify( index ) }` : '' }`
     this.subscriptions[ path ] = state
     this.conection.subscribe( path )
     this.conection.publish( '/read', JSON.stringify( { project: this.project, table, index } ) ) 
