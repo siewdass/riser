@@ -55,7 +55,7 @@ module.exports = {
     maxEntrypointSize: 512000,
     maxAssetSize: 512000
   },
-  devServer: process.env.NODE_ENV == 'development' ? {
+  devServer: process.env.DOMAIN !== 'riser' ? {
     host: '0.0.0.0',
     port: 80,
     server: 'http',

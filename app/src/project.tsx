@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { Box, Row, Col, Table, Button, Text, Dialog, Accordion, Grow } from './ui'
+import { Box, Row, Col, Table, Button, Text, Dialog, Accordion, Grow, notify, Notification } from './ui'
 import { Request } from './services/request'
+import { download, copy } from './services/utils'
 import { Input } from './ui/input'
 import { useForm } from './library/form'
 import { useNavigate } from 'react-router-dom'
@@ -80,17 +81,17 @@ export function Project() {
 
 	const actions =  [
 		{ icon: 'database', onClick: () => selected ? navigate( `/database?project=${selected.id}` ) : null },
-		{ icon: 'cloud-arrow-up', onClick: () => {} },
-		{ icon: 'window-maximize',  onClick: () => {} },
-		{ icon: 'chart-pie',  onClick: () => {} },
-		{ icon: ['fab', 'github'],  onClick: () => {} },
+		//{ icon: 'cloud-arrow-up', onClick: () => {} },
+		{ icon: 'window-maximize', onClick: () => { copy( selected?.id ); notify( 'Link copy to clipboard!' ) } },
+		{ icon: 'download', onClick: () => download( selected?.id ) },
+		//{ icon: 'chart-pie', onClick: () => {} },
+		{ icon: ['fab', 'github'], onClick: () => { copy( `https://riser.ddns.net:3000/webhook?project=${ selected?.id }` ); notify( 'Link copy to clipboard!' )} },
 	]
 
-	const download = `<!DOCTYPE html><html><head><script>const id = 'ID'</script></head><body><div id="root"></div><script src="http://localhost:3000/runtime.js"></script></body></html>`
-	//.replace("ID", selected?.id )
 	return (
 		<Box>
 			<Navbar router={ 'project' } />
+			<Notification />
 
 			{ loading ? <Loader /> : 
 				<Col grow padding={ 15 } gap={ 20 } style={ view !== 'create' ? { overflowY: 'scroll' } : null }>

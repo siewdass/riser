@@ -1,11 +1,14 @@
 import express, { Express, Request, Response, NextFunction } from 'express'
 import { createConnection, Schema } from 'mongoose'
-import dotenv from 'dotenv'
+import { config } from 'dotenv'
 import path from 'path'
 import fs from 'fs'
 import { createServer } from 'https'
+import mqtt, { MqttClient } from 'mqtt'
 
-dotenv.config( )
+config( )
+
+import { Create, Read, Update, Delete } from './store'
 
 import { API } from './api'
 import { Webhook } from './webhook'
@@ -19,7 +22,27 @@ database.model( 'Project', new Schema( { id: String, name: String, email: String
 database.model( 'Function', new Schema( { name: String, path: String, code: String, packages: Array, type: String } ) )
 database.model( 'Account', new Schema( { id: String, email: String, password: String } ) )
 
-const app: Express = express()
+const Mosquitto: MqttClient = mqtt.connect( `${process.env.MOSQUITTO_PROTOCOL}://${process.env.MOSQUITTO_HOST}:${process.env.MOSQUITTO_PORT}`, {
+	username: process.env.MOSQUITTO_USERNAME,
+	password: process.env.MOSQUITTO_PASSWORD
+} )
+
+const subscriptions = {
+	'/create': Create,
+	'/read': Read,
+	'/update': Update,
+	'/delete': Delete
+}
+
+function publish( path, packet ) { Mosquitto.publish( path, Buffer.from( JSON.stringify( packet ) ) ) }
+
+Mosquitto.on( 'connect', ( ) => Object.keys( subscriptions ).map( item => Mosquitto.subscribe( item ) ) )
+
+Mosquitto.on( 'message', ( topic: string, buffer: Buffer ) => {
+	if ( subscriptions[ topic ] ) subscriptions[ topic ]( JSON.parse( buffer.toString( ) ), publish )
+} )
+
+const app: Express = express( )
 
 app.use( express.json( ) )
 app.use( '/' , express.static( path.join( __dirname, '..', 'runtime' ) ) )
@@ -60,11 +83,11 @@ app.get( '/cdn.js', ( req: Request, res: Response ) => CDN( database.models, req
 // BACKEND FUNCTIONS
 app.post( '/api/*', ( req: Request, res: Response ) => API( database.models, req, res ) )
 
-if ( process.env.NODE_ENV == 'development' ) {
-	app.listen( process.env.PORT )
+if ( process.env.DOMAIN !== 'riser' ) {
+	app.listen( process.env.PORT, () => console.log('running') )
 } else {
 	createServer( {
 		key: fs.readFileSync( __dirname + '/../../riser.key', 'utf8' ),
 		cert: fs.readFileSync( __dirname + '/../../riser.crt', 'utf8' )
-	}, app ).listen( process.env.PORT )
+	}, app ).listen( process.env.PORT, () => console.log('running') )
 }

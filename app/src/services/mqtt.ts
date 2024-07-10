@@ -20,6 +20,6 @@ export function clientId( id: string ): void {
 	localStorage.setItem( 'mqtt', id )
 }
 
-export function Connect( url, username, password ): void {
-	mosquitto = mqtt.connect( url, { username, password } )
+export function Connect( url, data ): void {
+	mosquitto = mqtt.connect( url, data )
 }

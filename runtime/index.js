@@ -6,13 +6,13 @@ window.React = React
 
 const script = document.createElement( 'script' )
 script.type = 'text/javascript'
-script.src = `http://riser.ddns.net:3000/cdn.js?project=${ id }`
+script.src = `https://riser.ddns.net:3000/cdn.js?project=${ id }`
 document.head.appendChild( script )
 
 await new Promise((resolve, reject) => script.onload = () => resolve() )
 
 const useFetch = async ( method, path, data, headers = { 'Content-Type': 'application/json' } ) => {
-  const response = await fetch( method == 'GET' ? `http://riser.ddns.net:3000/api/${ id }${ path }?${ new URLSearchParams( data ) }` : `http://riser.ddns.net:3000/api/${ id }${ path }`, {
+  const response = await fetch( method == 'GET' ? `https://riser.ddns.net:3000/api/${ id }${ path }?${ new URLSearchParams( data ) }` : `https://riser.ddns.net:3000/api/${ id }${ path }`, {
     method,
     headers,
     body: method !== 'GET' ? JSON.stringify( data ) : null

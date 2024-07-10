@@ -1,6 +1,5 @@
 import React, { CSSProperties, ReactElement, useState } from 'react'
 import { Theme } from '../services/theme'
-import { error } from 'console'
 
 export function Input( props ): ReactElement {
 	const { color, light, dark, radius } = Theme()

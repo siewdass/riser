@@ -23,7 +23,7 @@ module.exports = {
     extensions: ['*', '.js', '.jsx'],
   },
   output: {
-    path: path.resolve( __dirname, '../backend/runtime' ),
+    path: path.resolve( __dirname, '../api/runtime' ),
     filename: 'runtime.js',
   }
 }
