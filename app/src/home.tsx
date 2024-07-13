@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { DB } from './services/indexeddb'
+import { Network } from './services/network'
 
-const db = new DB( )
+const network = new Network( )
 
 export function Home( ) {
   const [ input, setInput ] = useState( '' )
@@ -9,8 +9,8 @@ export function Home( ) {
   const [ data, setData ] = useState( [] )
 
   useEffect( () => {
-    db.read( {
-      table: 'user',
+    network.read( {
+      table: 'test',
       index: { owner: 'siewdass' },
       state: setData,
       page: [ 0, 10 ],
@@ -19,27 +19,35 @@ export function Home( ) {
   }, [] )
 
   const Create = () => {
-    if ( input != '' ) db.create( {
-      table: 'user',
+    if ( input != '' ) network.create( {
+      table: 'test',
       index: { owner: 'siewdass' },
-      value: { value: input }
+      value: { owner: 'siewdass', value: input }
     } )
   }
 
   const Update = () => {
-    if ( input != '' && input2 != '' ) db.update( {
-      table: 'user',
+    if ( input != '' && input2 != '' ) network.update( {
+      table: 'test',
       index: { owner: 'siewdass' },
-      value: { value: input },
-      newd: { value: input2 }
+      value: { owner: 'siewdass', value: input },
+      renew: { value: input2 }
     } )
   }
 
   const Delete = () => {
-    if ( input != '' ) db.delete( {
-      table: 'user',
+    if ( input != '' ) network.delete( {
+      table: 'test',
       index: { owner: 'siewdass' },
-      value: { value: input }
+      value: { owner: 'siewdass', value: input }
+    } )
+  }
+
+  const SignIn = ( ) => {
+    network.signin( {
+      email: 'siewdass@gmail.com',
+      password: '123456',
+      callback: () => console.log('signed')
     } )
   }
 
@@ -50,6 +58,7 @@ export function Home( ) {
       <button onClick={ Create }>add</button>
       <button onClick={ Update }>update</button>
       <button onClick={ Delete }>delete</button>
+      <button onClick={ SignIn }>sign</button>
       <ul>
         { data.map( (item: any, index: number ) => <li key={ index }>{ item.value }</li> ) }
       </ul>
