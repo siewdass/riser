@@ -43,18 +43,15 @@ export async function readTables( database, req, res ) {
 		const project = await database.Project.findOne( { id: req.body.id } ) 
 		if ( !project ) throw `project ${ req.body.id } not exist.` 
 
-		const connection = await connect( req.body.id )
-		const collection = await connection.listCollections( )
+		const items = await database.Table.find( { id: req.body.id } )
 
 		const data = await Promise.all(
-			collection.map( async ( { name } ) => {
-				const index = await connection.collection( name ).findOne( )
-				const documents = await connection.collection( name ).countDocuments( )
-				return { table: name, fields: index ? Object.keys( index ).length : 0, indexes: documents }
+			items.map( async ( { table } ) => {
+				const fields = await database.Archive.findOne( { id: req.body.id, table } )
+				const indexes = await database.Archive.find( { id: req.body.id, table } ).count()
+				return { table, fields: fields ? Object.keys( fields ).length : 0, indexes }
 			} )
 		)
-
-		await connection.close( )
 
 		res.json( { data } )
 
@@ -74,15 +71,9 @@ export async function readTable( database, { body }, res ) {
 		const project = await database.Project.findOne( { id: body.project } ) 
 		if ( !project ) throw `project ${ body.project } not exist.` 
 
-		const connection = await connect( body.project )
-
-		const tables = ( await connection.listCollections( ) ).map( ( { name } ) => name )
-
-		if ( !tables.includes( body.table ) ) throw `table ${ body.table } not exist.` 
-		const data = await connection.db.collection( body.table ).find({}, { projection: { _id: 0 } }).toArray()
-
-		await connection.close( )
-
+		const items = await database.Archive.find( { id: body.project, table: body.table } )
+		const data = items.map( e => e.value )
+		console.log( data )
 		res.json( { data } )
 
 	} catch ( error ) {

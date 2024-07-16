@@ -12,15 +12,17 @@ import { Auth, SignIn, SignUp, Create, Read, Update, Delete } from './store'
 
 import { API } from './api'
 import { Webhook } from './webhook'
-import { createProject, readProjects, updateProjects, deleteProject } from './project'
+import { createProject, readProjects, updateProjects, deleteProject, generateToken } from './project'
 import { createTable, readTables, readTable, deleteTable } from './database'
 import { CDN } from './cdn'
 import { Register, Login, Authorization } from './account'
 
-const database = createConnection( `${process.env.MONGO_URI}` )
+const database = createConnection( `${ process.env.MONGO_URI }` )
 database.model( 'Project', new Schema( { id: String, name: String, email: String, repository: String, branch: String, private: Boolean, username: String, token: String } ) )
 database.model( 'Function', new Schema( { name: String, path: String, code: String, packages: Array, type: String } ) )
 database.model( 'Account', new Schema( { id: String, email: String, password: String } ) )
+database.model( 'Table', new Schema( { id: String, table: String } ) )
+database.model( 'Archive', new Schema( { id: String, table: String, value: { type: Object, strict: false } } ) )
 
 const Mosquitto: MqttClient = mqtt.connect( `${ process.env.MOSQUITTO_PROTOCOL }://${ process.env.MOSQUITTO_HOST }:${ process.env.MOSQUITTO_PORT }`, {
 	username: process.env.MOSQUITTO_USERNAME,
@@ -37,7 +39,7 @@ const subscriptions = {
 Mosquitto.on( 'connect', ( ) => Object.keys( subscriptions ).map( item => Mosquitto.subscribe( item ) ) )
 
 Mosquitto.on( 'message', ( topic: string, buffer: Buffer ) => {
-	if ( subscriptions[ topic ] ) subscriptions[ topic ]( JSON.parse( buffer.toString( ) ), Mosquitto )
+	if ( subscriptions[ topic ] ) subscriptions[ topic ]( database.models, JSON.parse( buffer.toString( ) ), Mosquitto )
 } )
 
 const app: Express = express( )
@@ -58,9 +60,9 @@ app.use( ( req: Request, res: Response, next: NextFunction ) => {
 // ACCOUNT
 app.post( '/account/register', ( req: Request, res: Response ) => Register( database.models, req, res ) )
 app.post( '/account/login', ( req: Request, res: Response ) => Login( database.models, req, res ) )
-app.post( '/api/signin', ( req: Request, res: Response ) => SignIn( req, res ) )
-app.post( '/api/signup', ( req: Request, res: Response ) => SignUp( req, res ) )
-app.post( '/api/auth', ( req: Request, res: Response ) => Auth( req, res ) )
+app.post( '/api/signin', ( req: Request, res: Response ) => SignIn( database.models, req, res ) )
+app.post( '/api/signup', ( req: Request, res: Response ) => SignUp( database.models, req, res ) )
+app.post( '/api/auth', ( req: Request, res: Response ) => Auth( database.models, req, res ) )
 app.use( ( req: Request, res: Response, next: NextFunction ) => Authorization( database.models, req, res, next ) )
 
 // BUILD
@@ -71,6 +73,7 @@ app.post( '/project/create', ( req: Request, res: Response ) => createProject( d
 app.get( '/project/read', ( req: Request, res: Response ) => readProjects( database.models, req, res ) )
 app.post( '/project/update', ( req: Request, res: Response ) => updateProjects( database.models, req, res ) )
 app.post( '/project/delete', ( req: Request, res: Response ) => deleteProject( database.models, req, res ) )
+app.post( '/project/token', ( req: Request, res: Response ) => generateToken( database.models, req, res ) )
 
 // TABLES
 app.post( '/table/create', ( req: Request, res: Response ) => createTable( database.models, req, res ) )

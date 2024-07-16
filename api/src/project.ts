@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid'
+import jwt from 'jsonwebtoken'
 
 const avoid = { _id: 0, __v: 0 }
 
@@ -69,4 +70,22 @@ export async function deleteProject( database, req, res ) {
 		res.status( 400 ).json( { error } )
 
 	}
+}
+
+export async function generateToken( database, req, res ) {
+	try {
+
+		const project = await database.Project.findOne( { id: req.body.id, email: req.body.email } ) 
+		if ( !project ) throw `project ${ req.body.id } not exist.` 
+
+		const token = await jwt.sign( { id: project.id }, process.env.SECRET_KEY, { expiresIn: '365d' } )
+
+		await database.Project.updateOne( { id: req.body.id, email: req.body.email }, { token } ) 
+
+		res.json( { token } )
+  
+	} catch ( error ) {
+		console.error( error )
+		res.status( 400 ).json( { error } )
+	} 
 }

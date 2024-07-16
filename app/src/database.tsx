@@ -39,7 +39,7 @@ export function Database() {
 	useEffect( () => {
 		if ( localStorage.getItem( 'token' ) === null ) navigate( '/user' )
 		getTables( )
-	}, []) 
+	}, [] ) 
 
 	const form: any = [ 'name' ]
 
@@ -62,12 +62,12 @@ export function Database() {
 	}
 
 	const createTable = async data => {
-    const response = await Request( 'POST', '/table/create', { id: project, table: data.name } )
+		const response = await Request( 'POST', '/table/create', { id: project, table: data.name } )
 		if ( !response?.error ) getTables( )
 	}
 	
 	const deleteTable = async ( ) => {
-    const response = await Request( 'POST', '/table/delete', { id: project, table: selected?.table } )
+		const response = await Request( 'POST', '/table/delete', { id: project, table: selected?.table } )
 		if ( !response?.error ) getTables( )
 	}
 

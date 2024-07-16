@@ -32,7 +32,7 @@ export function Project() {
 
 	useEffect( () => {
 		getProjects( )
-	}, []) 
+	}, [] ) 
 
 	const [ create, onCreate ] = useForm( {
 		name: { type: 'text', required: { value: true, message: 'Required' } },
@@ -45,10 +45,10 @@ export function Project() {
 	useEffect( () => {
 		//localStorage.clear( )
 		if ( localStorage.getItem( 'token' ) === null ) navigate( '/user' )
- 	}, [])
+ 	}, [] )
 
 	const createProject = async data => {
-    const response = await Request( 'POST', '/project/create', data )
+		const response = await Request( 'POST', '/project/create', data )
 		if ( !response.error ) {
 			getProjects( )
 			setView( 'project' )
@@ -56,7 +56,7 @@ export function Project() {
 	}
 
 	const deleteProject = async ( ) => {
-    const response = await Request( 'POST', '/project/delete', { name: selected.name } )
+		const response = await Request( 'POST', '/project/delete', { name: selected.name } )
 		if ( !response.error ) getProjects()
 	}
 
@@ -79,13 +79,16 @@ export function Project() {
 		]
 	} ), [ view, selected, color ] )
 
-	const actions =  [
+	const actions = [
 		{ icon: 'database', onClick: () => selected ? navigate( `/database?project=${selected.id}` ) : null },
 		//{ icon: 'cloud-arrow-up', onClick: () => {} },
 		{ icon: 'window-maximize', onClick: () => { copy( selected?.id ); notify( 'Link copy to clipboard!' ) } },
-		{ icon: 'download', onClick: () => download( selected?.id ) },
+		{ icon: 'download', onClick: async () => {
+			const response = await Request( 'POST', '/project/token', { id: selected?.id } )
+			if ( !response.error ) { copy( response.token ); notify( 'New token copy to clipboard!' )} 
+		} },
 		//{ icon: 'chart-pie', onClick: () => {} },
-		{ icon: ['fab', 'github'], onClick: () => { copy( `https://riser.ddns.net:3000/webhook?project=${ selected?.id }` ); notify( 'Link copy to clipboard!' )} },
+		//{ icon: [ 'fab', 'github' ], onClick: () => { copy( `https://riser.ddns.net:3000/webhook?project=${ selected?.id }` ); notify( 'Link copy to clipboard!' )} },
 	]
 
 	return (
@@ -109,7 +112,7 @@ export function Project() {
 						<>
 							{ projects?.map( ( data: any, index ) =>
 								<Col key={ index } padding={ '15px 20px 15px 20px' } radius={ 10 } border={ `1px solid ${ data.name === selected?.name ? color : dark }` } onClick={ () => setSelected( data ) }>
-									<Row justify={ 'space-between' } style={{ borderBottom: `1px solid ${ data.name === selected?.name ? color : dark }`, paddingBottom: 15, marginBottom: 10 }}>
+									<Row justify={ 'space-between' } style={ { borderBottom: `1px solid ${ data.name === selected?.name ? color : dark }`, paddingBottom: 15, marginBottom: 10 } }>
 										<Text label={ data.name } transform={ 'uppercase' } />
 										<Row align={ 'center' } gap={ 20 } style={ { display: data.name === selected?.name ? 'flex' : 'none', opacity: data.name === selected?.name ? 1 : 0, transition: 'opacity .1s linear' } }>
 											{ ( actions as any ).map( ( item, index ) => 
@@ -140,4 +143,3 @@ export function Project() {
 		</Box>
 	)
 }
-
